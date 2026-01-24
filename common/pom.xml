@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.emergency</groupId>
+        <artifactId>EICS-Backend</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <artifactId>common</artifactId>
+    <name>common</name>
+    <description>Shared entities, DTOs, enums, and utilities</description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <!-- Lombok（用于实体类简化） -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Jackson（确保各服务序列化行为一致） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- Validation API（如果实体使用 @NotBlank 等注解） -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <!-- 如果你用 JPA 实体，需引入 JPA 注解（但 common 不应依赖 spring-data-jpa） -->
+        <!-- 只引入 javax/jakarta.persistence API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version> <!-- 兼容 Spring Boot 3 (Jakarta EE 9+) -->
+        </dependency>
+    </dependencies>
+</project>
