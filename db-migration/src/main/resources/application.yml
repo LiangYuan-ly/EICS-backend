@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: db-migration-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/emergency_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    locations: classpath:db/migration
+    encoding: UTF-8
+    clean-disabled: true  # 生产必须为 true！
+    validate-on-migrate: true
+
+# 可选：关闭 Web 服务（因为不需要 HTTP）
+spring.main.web-application-type: none
