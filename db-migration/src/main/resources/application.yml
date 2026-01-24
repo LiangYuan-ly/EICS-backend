@@ -10,11 +10,8 @@ spring:
 
   flyway:
     enabled: true
-    baseline-on-migrate: false
-    locations: classpath:db/migration
+    baseline-on-migrate: false        # 首次运行建议 false；若已有表需迁移再设为 true
+    locations: classpath:db/migration # 默认值，可省略
     encoding: UTF-8
-    clean-disabled: true  # 生产必须为 true！
     validate-on-migrate: true
-
-# 可选：关闭 Web 服务（因为不需要 HTTP）
-spring.main.web-application-type: none
+    clean-disabled: true              # 禁止 flyway clean（生产环境必须开启）
