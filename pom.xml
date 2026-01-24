@@ -12,12 +12,15 @@
 
     <!-- 模块定义 -->
     <modules>
+        <module>common</module>
         <module>auth-service</module>
-<!--        <module>gateway-service</module>-->
         <module>user-service</module>
-<!--        <module>event-service</module>-->
-<!--        <module>cbr-service</module>-->
-<!--        <module>notification-service</module>-->
+        <module>event-service</module>
+        <module>notification-service</module>
+        <module>news-service</module>
+        <module>material-service</module>
+        <module>cbr-service</module>
+        <module>api-gateway</module>
     </modules>
 
     <!-- 父项目 -->
