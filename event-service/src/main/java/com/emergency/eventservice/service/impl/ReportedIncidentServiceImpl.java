@@ -141,7 +141,7 @@ public class ReportedIncidentServiceImpl implements ReportedIncidentService {
     public Result<IncidentDetailDto> getIncidentDetail(Integer id) {
         ReportedIncident inc = reportedIncidentRepository.findById(id).orElse(null);
         if (inc == null || (inc.getDeleted() != null && inc.getDeleted() == 1)) {
-            return Result.error("200", "未查找到相关事件");
+            return Result.error(200, "未查找到相关事件");
         }
         List<User> users = userRepository.findAll();
         List<Admin> admins = adminRepository.findAll();

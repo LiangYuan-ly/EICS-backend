@@ -55,7 +55,7 @@ spring:
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/emergency-events/**, /api/emergency-events, /api/map/**, /api/map, /api/dashboard/**, /api/dashboard
+            - Path=/api/emergency-events/**, /api/emergency-events, /api/map/**, /api/map, /api/dashboard/**, /api/dashboard, /api/reported-incidents/**, /api/reported-incidents, /api/reported-incidents-detail/**
 
         # 6. AI 决策服务/预案服务 (cbr-service)
         - id: cbr-service
