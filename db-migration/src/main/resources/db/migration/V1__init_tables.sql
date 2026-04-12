@@ -1,211 +1,223 @@
--- 用户信息表
-CREATE TABLE users (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    USERID VARCHAR(255) NOT NULL UNIQUE COMMENT '用户唯一标识',
-    UNAME VARCHAR(255) COMMENT '用户名（按规则生成默认）',
-    AVATAR VARCHAR(255) DEFAULT '' COMMENT '头像（默认值）',
-    GENDER INT DEFAULT 0 COMMENT '性别（0:未知，1:男，2:女）',
-    PHONE VARCHAR(20) COMMENT '手机号（脱敏）',
-    LOCATION VARCHAR(255) COMMENT '地区',
-    `STATUS/DELETED` INT DEFAULT 0 COMMENT '状态（0:正在使用，1:已注销）',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) COMMENT='用户信息';
+-- V1__init_tables.sql
+-- 突发事件应急上报与指挥系统 数据库初始化脚本
 
--- 机构信息表
-CREATE TABLE depts (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    DEPT_NAME VARCHAR(255) NOT NULL COMMENT '机构名称',
-    DEPT_PERSON VARCHAR(255) COMMENT '机构联系人',
-    DEPT_PHONE VARCHAR(20) COMMENT '机构联系电话',
-    DEPT_ADDRESS VARCHAR(255) COMMENT '机构位置',
-    PARENT_DEPT INT NOT NULL DEFAULT 0 COMMENT '父机构ID（顶级为0）',
-    DEPT_RESPONSIBILITY VARCHAR(500) COMMENT '机构职责'
-) COMMENT='机构信息';
+-- 1. 用户信息表 (user)
+CREATE TABLE `user` (
+    `id` INT AUTO_INCREMENT COMMENT '主键ID',
+    `userid` VARCHAR(64) NOT NULL UNIQUE COMMENT '用户微信唯一标识',
+    `uname` VARCHAR(50) DEFAULT '新用户' COMMENT '用户名',
+    `avatar` VARCHAR(255) DEFAULT NULL COMMENT '头像URL',
+    `gender` INT DEFAULT 0 COMMENT '性别（0:未知, 1:男, 2:女）',
+    `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号',
+    `location` VARCHAR(500) DEFAULT NULL COMMENT '地区',
+    `deptid` INT DEFAULT NULL COMMENT '机构ID',
+    `status` INT DEFAULT 0 COMMENT '状态（0:正在使用, 1:已注销）',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
 
--- 管理员信息表
-CREATE TABLE admins (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    ADMIN_NAME VARCHAR(255) NOT NULL COMMENT '管理员姓名',
-    ADMIN_PASSWORD VARCHAR(255) NOT NULL COMMENT '密码',
-    ADMIN_AVATAR VARCHAR(255) DEFAULT '' COMMENT '头像（默认值）',
-    ADMIN_GENDER INT DEFAULT 0 COMMENT '性别（0:未知，1:男，2:女）',
-    ADMIN_PHONE VARCHAR(20) COMMENT '手机号（脱敏）',
-    ADMIN_EMAIL VARCHAR(255) COMMENT '邮箱',
-    ADMIN_LOCATION VARCHAR(255) COMMENT '地区',
-    DEPT_ID VARCHAR(255) COMMENT '所属机构ID',
-    `STATUS/DELETED` INT DEFAULT 0 COMMENT '状态（0:正在使用，1:已注销）',
-    REMARK VARCHAR(500) COMMENT '备注',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) COMMENT='管理员信息';
+-- 2. 管理员信息表 (admins)
+CREATE TABLE `admins` (
+    `id` INT AUTO_INCREMENT COMMENT '主键ID',
+    `admin_name` VARCHAR(20) NOT NULL COMMENT '管理员姓名',
+    `admin_password` VARCHAR(255) NOT NULL COMMENT '加密后的密码',
+    `admin_avatar` VARCHAR(255) DEFAULT NULL COMMENT '头像URL',
+    `admin_gender` INT DEFAULT 0 COMMENT '性别',
+    `admin_phone` VARCHAR(20) DEFAULT NULL UNIQUE COMMENT '手机号(唯一标识)',
+    `admin_email` VARCHAR(64) DEFAULT NULL COMMENT '邮箱',
+    `admin_location` VARCHAR(500) DEFAULT NULL COMMENT '地区',
+    `dept_id` INT DEFAULT NULL COMMENT '所属机构ID',
+    `status` INT DEFAULT 1 COMMENT '状态（0:停用, 1:启用）',
+    `remark` VARCHAR(256) DEFAULT NULL COMMENT '备注',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_admin_phone` (`admin_phone`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理员信息表';
 
--- 突发事件分类表
-CREATE TABLE incidents_category (
-    CATEGORY_CODE VARCHAR(50) NOT NULL PRIMARY KEY COMMENT '代码',
-    CATEGORY_NAME VARCHAR(255) COMMENT '类别名称',
-    REMARK VARCHAR(500) COMMENT '说明',
-    PARENT_CODE VARCHAR(50) COMMENT '父代码'
-) COMMENT='突发事件分类';
+-- 3. 机构信息表 (depts) 
+CREATE TABLE `depts` (
+    `id` INT AUTO_INCREMENT COMMENT '主键ID',
+    `dept_name` VARCHAR(50) NOT NULL COMMENT '机构名称',
+    `dept_code` VARCHAR(18) NOT NULL UNIQUE COMMENT '机构编码(18位)',
+    `dept_status` INT NOT NULL DEFAULT 1 COMMENT '状态（0:停用, 1:启用）',
+    `dept_person` VARCHAR(20) DEFAULT NULL COMMENT '联系人',
+    `dept_phone` VARCHAR(20) DEFAULT NULL COMMENT '联系电话',
+    `longitude` DOUBLE DEFAULT NULL COMMENT '经度',
+    `latitude` DOUBLE DEFAULT NULL COMMENT '纬度',
+    `dept_address` VARCHAR(500) DEFAULT NULL COMMENT '位置描述',
+    `parent_dept` INT NOT NULL DEFAULT 0 COMMENT '父机构ID',
+    `ancestor` VARCHAR(255) DEFAULT NULL COMMENT '祖级列表',
+    `dept_responsibility` VARCHAR(256) DEFAULT NULL COMMENT '职责描述',
+    PRIMARY KEY (`id`),
+    INDEX `idx_dept_code` (`dept_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='机构信息表';
 
--- 物资分类表
-CREATE TABLE material_category (
-    CATEGORY_CODE VARCHAR(50) NOT NULL PRIMARY KEY COMMENT '代码',
-    CATEGORY_NAME VARCHAR(255) COMMENT '类别名称',
-    REMARK VARCHAR(500) COMMENT '说明',
-    PARENT_CODE VARCHAR(50) COMMENT '父代码'
-) COMMENT='物资分类';
+-- 4. 突发事件分类表 (incidents_category) 
+CREATE TABLE `incidents_category` (
+    `category_code` VARCHAR(20) NOT NULL COMMENT '分类代码',
+    `category_name` VARCHAR(50) NOT NULL COMMENT '类别名称',
+    `remark` VARCHAR(255) DEFAULT NULL COMMENT '说明',
+    `parent_code` VARCHAR(20) DEFAULT NULL COMMENT '父代码',
+    PRIMARY KEY (`category_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='事件分类表';
 
--- 仓库表
-CREATE TABLE warehouses (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    WAREHOUSE_CODE VARCHAR(100) NOT NULL UNIQUE COMMENT '仓库编码',
-    WAREHOUSE_NAME VARCHAR(255) NOT NULL COMMENT '仓库名称',
-    WAREHOUSE_ADDRESS VARCHAR(255) COMMENT '仓库地址',
-    WAREHOUSE_PERSON VARCHAR(255) COMMENT '仓库联系人',
-    WAREHOUSE_PHONE VARCHAR(20) COMMENT '仓库联系电话',
-    WAREHOUSE_STATUS VARCHAR(10) NOT NULL DEFAULT '1' COMMENT '仓库状态（0:停用，1:启用）',
-    REMARK VARCHAR(500) COMMENT '备注',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    DELETED INT DEFAULT 0 COMMENT '删除标识（0:未删除，1:已删除）'
-) COMMENT='仓库';
+-- 5. 上报事件信息表 (reported_incidents)
+CREATE TABLE `reported_incidents` (
+    `id` INT AUTO_INCREMENT COMMENT '主键ID',
+    `incident_title` VARCHAR(50) NOT NULL COMMENT '事件标题',
+    `incident_type` INT DEFAULT 0 COMMENT '类型(1:自然灾害等)',
+    `incident_content` TEXT COMMENT '事件详情',
+    `incident_location` VARCHAR(500) NOT NULL COMMENT '发生位置',
+    `incident_range` INT DEFAULT NULL COMMENT '影响范围(km)',
+    `occurrence_time` DATETIME NOT NULL COMMENT '发生时间',
+    `longitude` DOUBLE DEFAULT NULL,
+    `latitude` DOUBLE DEFAULT NULL,
+    `incident_status` INT NOT NULL COMMENT '状态(2:待审核, 3:通过等)',
+    `admin_id` INT DEFAULT NULL COMMENT '审核管理员ID',
+    `review` VARCHAR(256) DEFAULT NULL COMMENT '审核意见',
+    `user_id` INT NOT NULL COMMENT '上报人ID',
+    `deleted` INT DEFAULT 0 COMMENT '逻辑删除',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_reported_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公众上报事件表';
 
--- 物资表
-CREATE TABLE materials (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    MATERIAL_CODE VARCHAR(100) COMMENT '物资编码',
-    MATERIAL_NAME VARCHAR(255) COMMENT '物资名称',
-    MATERIAL_CATEGORY VARCHAR(50) COMMENT '物资类型编码（关联material_category）',
-    MATERIAL_WAREHOUSE VARCHAR(100) COMMENT '仓库编码（关联warehouses）',
-    MATERIAL_BATCH_NO VARCHAR(100) COMMENT '批次号',
-    PRODUCED_TIME DATETIME COMMENT '生产日期',
-    EFFECTIVE_TIME DATETIME COMMENT '有效日期',
-    STOCK_QUANTITY INT COMMENT '库存数量',
-    SECURITY_QUANTITY INT COMMENT '安全库存',
-    SPECIFICATION VARCHAR(255) COMMENT '规格型号（如10只/包）',
-    UNIT VARCHAR(20) COMMENT '计量单位（个，包，箱）',
-    MANUFACTURER VARCHAR(255) COMMENT '生产厂家',
-    MATERIAL_STATUS INT DEFAULT 1 COMMENT '当前状态（0:停用，1:启用）',
-    REMARK VARCHAR(500) COMMENT '备注',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    DELETED INT DEFAULT 0 COMMENT '删除标识（0:未删除，1:已删除）'
-) COMMENT='物资';
+-- 6. 发布事件信息表 (published_incidents)
+CREATE TABLE `published_incidents` (
+    `id` INT AUTO_INCREMENT COMMENT '主键ID',
+    `incident_title` VARCHAR(50) NOT NULL UNIQUE COMMENT '事件标题',
+    `incident_type` INT DEFAULT NULL,
+    `incident_level` INT DEFAULT NULL COMMENT '严重程度(1-4)',
+    `incident_content` TEXT,
+    `incident_location` VARCHAR(500),
+    `longitude` DOUBLE,
+    `latitude` DOUBLE,
+    `incident_range` INT,
+    `occurrence_time` DATETIME,
+    `incident_status` INT NOT NULL COMMENT '状态(2:待发布, 3:已发布)',
+    `remark` VARCHAR(255),
+    `admin_id` INT NOT NULL COMMENT '创建者ID',
+    `publish_id` INT DEFAULT NULL COMMENT '发布者ID',
+    `deleted` INT DEFAULT 0,
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='官方发布事件表';
 
--- 新闻表
-CREATE TABLE news (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    NEWS_NAME VARCHAR(255) NOT NULL COMMENT '新闻名称',
-    PUBLISH_TIME DATE COMMENT '发布时间',
-    PUBLISH_COMPANY VARCHAR(255) COMMENT '发布机构',
-    NEWS_PHOTO VARCHAR(255) DEFAULT '' COMMENT '相关图片（默认图片）',
-    NEWS_URL VARCHAR(500) NOT NULL COMMENT '对应链接',
-    NEWS_STATUS INT NOT NULL DEFAULT 0 COMMENT '新闻状态（1:待提交，2:待发布，3:已发布，4:已撤回）',
-    DELETED INT DEFAULT 0 COMMENT '删除标识（0:未删除，1:已删除）',
-    ADMIN_ID INT COMMENT '管理员ID（最新修改者）',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) COMMENT='新闻';
+-- 7. 仓库信息表 (warehouses)
+CREATE TABLE `warehouses` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `warehouse_code` VARCHAR(20) NOT NULL UNIQUE COMMENT '仓库编码',
+    `warehouse_name` VARCHAR(50) NOT NULL COMMENT '仓库名称',
+    `warehouse_address` VARCHAR(500),
+    `longitude` DOUBLE,
+    `latitude` DOUBLE,
+    `warehouse_person` VARCHAR(20),
+    `warehouse_phone` VARCHAR(20),
+    `warehouse_status` INT NOT NULL DEFAULT 1,
+    `remark` VARCHAR(256),
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='仓库信息表';
 
--- 上报事件表
-CREATE TABLE reported_incidents (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    INCIDENT_TITLE VARCHAR(255) NOT NULL COMMENT '事件标题',
-    INCIDENT_TYPE INT DEFAULT 0 COMMENT '事件类型（0:其他，1:自然灾害...）',
-    INCIDENT_CONTENT TEXT COMMENT '事件内容',
-    INCIDENT_LOCATION VARCHAR(255) NOT NULL COMMENT '事件发生位置',
-    INCIDENT_RANGE INT COMMENT '事件覆盖范围',
-    OCCURRENCE_TIME DATETIME NOT NULL COMMENT '事件发生时间',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INCIDENT_STATUS INT NOT NULL COMMENT '事件状态（1:待提交...5:已撤回）',
-    ADMIN_ID INT COMMENT '管理员ID（最新修改者）',
-    REVIEW VARCHAR(500) COMMENT '审核意见',
-    USER_ID INT NOT NULL COMMENT '上报用户ID',
-    DELETED INT DEFAULT 0 COMMENT '删除标识（0:未删除，1:已删除）'
-) COMMENT='上报事件';
+-- 8. 物资信息表 (materials)
+CREATE TABLE `materials` (
+    `id` INT AUTO_INCREMENT UNIQUE,
+    `material_code` VARCHAR(20) NOT NULL COMMENT '物资编码',
+    `material_name` VARCHAR(50) NOT NULL COMMENT '物资名称',
+    `material_category` VARCHAR(20) COMMENT '物资类型编码',
+    `material_warehouse` VARCHAR(20) COMMENT '仓库编码',
+    `material_batch_no` VARCHAR(50) COMMENT '批次号',
+    `produced_time` DATETIME COMMENT '生产日期',
+    `effective_time` DATETIME COMMENT '有效日期',
+    `stock_quantity` INT DEFAULT 0 COMMENT '当前库存',
+    `security_quantity` INT DEFAULT 0 COMMENT '安全库存',
+    `specification` VARCHAR(50) COMMENT '规格型号',
+    `unit` VARCHAR(20) COMMENT '计量单位',
+    `manufacturer` VARCHAR(50) COMMENT '生产厂家',
+    `material_status` INT DEFAULT 1,
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`material_code`),
+    INDEX `idx_mat_warehouse` (`material_warehouse`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应急物资表';
 
--- 上报事件附件表
-CREATE TABLE reported_attachments (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ATTACHMENT_NAME VARCHAR(255) COMMENT '附件名称',
-    ATTACHMENT_URL VARCHAR(500) COMMENT '附件地址',
-    ATTACHMENT_TYPE INT COMMENT '附件类型',
-    ATTACHMENT_SIZE INT COMMENT '附件大小',
-    USER_ID INT NOT NULL COMMENT '上报用户ID'
-) COMMENT='上报事件附件';
+-- 9. 物资出入库记录表 (material_inout)
+CREATE TABLE `material_inout` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `material_id` INT NOT NULL COMMENT '物资ID',
+    `warehouse_id` INT NOT NULL COMMENT '仓库ID',
+    `in_out` INT NOT NULL DEFAULT 0 COMMENT '0:出库, 1:入库',
+    `num` INT NOT NULL COMMENT '数量',
+    `remark` VARCHAR(255),
+    `admin_id` INT NOT NULL COMMENT '操作员ID',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='出入库明细表';
 
--- 审核_管理员多对多关系表
-CREATE TABLE reported_admins (
-    REPORTED_ID INT NOT NULL COMMENT '上报事件ID',
-    ADMIN_ID INT NOT NULL COMMENT '审核管理员ID',
-    PRIMARY KEY (REPORTED_ID, ADMIN_ID)
-) COMMENT='审核_管理员多对多';
+-- 10. 应急预案表 (plans)
+CREATE TABLE `plans` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `plan_code` VARCHAR(20) NOT NULL COMMENT '预案编码',
+    `plan_title` VARCHAR(50) NOT NULL COMMENT '预案名称',
+    `plan_type` INT COMMENT '预案类型',
+    `category_code` VARCHAR(20) COMMENT '适用事件类型',
+    `plan_level` INT COMMENT '事件等级',
+    `dept_id` INT COMMENT '发布机构',
+    `publish_time` DATETIME,
+    `plan_status` INT DEFAULT 1,
+    `plan_url` VARCHAR(255) COMMENT '访问地址',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应急预案表';
 
--- 紧急事件（已发布）表
-CREATE TABLE published_incidents (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    INCIDENT_TITLE VARCHAR(255) NOT NULL UNIQUE COMMENT '事件标题',
-    INCIDENT_TYPE INT COMMENT '事件类型',
-    INCIDENT_LEVEL INT COMMENT '事件严重程度（1:特别重大...4:一般）',
-    INCIDENT_CONTENT TEXT COMMENT '事件内容',
-    INCIDENT_LOCATION VARCHAR(255) COMMENT '事件发生位置',
-    INCIDENT_RANGE INT COMMENT '事件覆盖范围',
-    OCCURRENCE_TIME DATETIME COMMENT '事件发生时间',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INCIDENT_STATUS INT NOT NULL COMMENT '事件状态（1:待提交...4:已撤回）',
-    REMARK VARCHAR(500) COMMENT '备注',
-    ADMIN_ID INT NOT NULL COMMENT '上报管理员ID',
-    PUBLISH_ID INT COMMENT '发布管理员ID',
-    DELETED INT DEFAULT 0 COMMENT '删除标识（0:未删除，1:已删除）'
-) COMMENT='紧急事件';
+-- 11. 附件关联表
+CREATE TABLE `reported_attachments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `attachment_name` VARCHAR(128) COMMENT '文件名',
+    `attachment_url` VARCHAR(255) COMMENT '文件路径',
+    `attachment_type` INT COMMENT '1:图片, 2:视频, 3:文档',
+    `attachment_size` INT COMMENT '大小(KB)',
+    `target_id` INT NOT NULL COMMENT '关联的业务ID(上报/发布/预案ID)',
+    `target_type` VARCHAR(20) NOT NULL COMMENT '业务类型(REPORT/PUBLISH/PLAN)',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统附件表';
 
--- 已发布事件附件表
-CREATE TABLE published_attachments (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ATTACHMENT_NAME VARCHAR(255) COMMENT '附件名称',
-    ATTACHMENT_URL VARCHAR(500) COMMENT '附件地址',
-    ATTACHMENT_TYPE INT COMMENT '附件类型',
-    ATTACHMENT_SIZE INT COMMENT '附件大小',
-    ADMIN_ID INT NOT NULL COMMENT '上报管理员ID'
-) COMMENT='已发布事件附件';
+CREATE TABLE `published_attachments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `attachment_name` VARCHAR(128) COMMENT '文件名',
+    `attachment_url` VARCHAR(255) COMMENT '文件路径',
+    `attachment_type` INT COMMENT '1:图片, 2:视频, 3:文档',
+    `attachment_size` INT COMMENT '大小(KB)',
+    `target_id` INT NOT NULL COMMENT '关联的业务ID(上报/发布/预案ID)',
+    `target_type` VARCHAR(20) NOT NULL COMMENT '业务类型(REPORT/PUBLISH/PLAN)',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统附件表';
 
--- 发布_超级管理员多对多关系表
-CREATE TABLE published_admins (
-    PUBLISHED_ID INT NOT NULL COMMENT '紧急事件ID',
-    ADMIN_ID INT NOT NULL COMMENT '发布管理员ID',
-    PRIMARY KEY (PUBLISHED_ID, ADMIN_ID)
-) COMMENT='发布_管理员多对多';
+CREATE TABLE `plan_attachments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `attachment_name` VARCHAR(128) COMMENT '文件名',
+    `attachment_url` VARCHAR(255) COMMENT '文件路径',
+    `attachment_type` INT COMMENT '1:图片, 2:视频, 3:文档',
+    `attachment_size` INT COMMENT '大小(KB)',
+    `target_id` INT NOT NULL COMMENT '关联的业务ID(上报/发布/预案ID)',
+    `target_type` VARCHAR(20) NOT NULL COMMENT '业务类型(REPORT/PUBLISH/PLAN)',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统附件表';
 
--- 预案表
-CREATE TABLE plans (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    PLAN_CODE VARCHAR(100) NOT NULL COMMENT '预案编码',
-    PLAN_TITLE VARCHAR(255) NOT NULL COMMENT '预案名称',
-    PLAN_TYPE INT COMMENT '预案类型（总体、专项）',
-    CATEGORY_CODE VARCHAR(50) COMMENT '适用事件类型（突发事件编码）',
-    PLAN_LEVEL INT COMMENT '事件等级',
-    DEPT_ID INT COMMENT '发布机构ID',
-    PUBLISH_TIME DATETIME COMMENT '发布时间',
-    PLAN_STATUS INT COMMENT '状态',
-    CREATE_TIME DATETIME COMMENT '创建时间',
-    UPDATE_TIME DATETIME COMMENT '更新时间',
-    PLAN_URL VARCHAR(500) COMMENT '访问地址'
-) COMMENT='预案';
-
--- 出入库记录表
-CREATE TABLE material_inout (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    MATERIAL_ID INT NOT NULL COMMENT '物资ID',
-    WAREHOUSE_ID INT NOT NULL COMMENT '仓库ID',
-    IN_OUT INT DEFAULT 0 COMMENT '出入库（0:出库，1:入库）',
-    NUM INT COMMENT '数量',
-    REMARK VARCHAR(500) COMMENT '备注',
-    ADMIN_ID INT NOT NULL COMMENT '管理员ID',
-    CREATE_TIME DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UPDATE_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) COMMENT='出入库记录';
+-- 12. 新闻信息表 (news)
+CREATE TABLE `news` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `news_name` VARCHAR(50) NOT NULL COMMENT '新闻名称',
+    `publish_time` DATETIME,
+    `publish_company` VARCHAR(50) COMMENT '发布机构',
+    `news_photo` VARCHAR(255) COMMENT '配图URL',
+    `news_url` VARCHAR(255) NOT NULL COMMENT '链接',
+    `news_status` INT DEFAULT 1 COMMENT '1:待发布, 2:已发布',
+    `deleted` INT DEFAULT 0,
+    `admin_id` INT COMMENT '操作管理员',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='新闻信息表';

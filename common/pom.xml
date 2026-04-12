@@ -8,7 +8,7 @@
         <groupId>com.emergency</groupId>
         <artifactId>EICS-Backend</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>common</artifactId>
@@ -30,14 +30,14 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- Validation API（如果实体使用 @NotBlank 等注解） -->
+        <!-- Validation API（如果实体使�?@NotBlank 等注解） -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
-        <!-- 如果你用 JPA 实体，需引入 JPA 注解（但 common 不应依赖 spring-data-jpa） -->
-        <!-- 只引入 javax/jakarta.persistence API -->
+        <!-- 如果你用 JPA 实体，需引入 JPA 注解（但 common 不应依赖 spring-data-jpa�?-->
+        <!-- 只引�?javax/jakarta.persistence API -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>

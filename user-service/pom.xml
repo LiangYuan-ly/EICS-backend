@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 继承父模块 -->
+    <!-- 继承父模�?-->
     <parent>
         <groupId>com.emergency</groupId>
         <artifactId>EICS-Backend</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>user-service</artifactId>
@@ -27,18 +27,18 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <!-- 版本由父模块或 BOM 管理，但 Alibaba Cloud 暂未被 Spring Cloud 官方 BOM 覆盖，
-                 所以建议显式指定兼容版本 -->
+            <!-- 版本由父模块�?BOM 管理，但 Alibaba Cloud 暂未�?Spring Cloud 官方 BOM 覆盖�?
+                 所以建议显式指定兼容版�?-->
             <version>2022.0.0.0</version>
         </dependency>
 
-        <!-- 数据库：JPA 方案（若你用 MyBatis，请替换为 mybatis-plus） -->
+        <!-- 数据库：JPA 方案（若你用 MyBatis，请替换�?mybatis-plus�?-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- MySQL 驱动（版本已在父模块 dependencyManagement 中统一为 8.0.33） -->
+        <!-- MySQL 驱动（版本已在父模块 dependencyManagement 中统一�?8.0.33�?-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
