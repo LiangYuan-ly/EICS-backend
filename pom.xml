@@ -21,6 +21,7 @@
         <module>material-service</module>
         <module>cbr-service</module>
         <module>api-gateway</module>
+        <module>db-migration</module>
     </modules>
 
     <!-- 父项目 -->
