@@ -6,7 +6,7 @@ import com.emergency.auth.dto.*;
 import java.util.List;
 
 public interface DeptService {
-    Result<PageData<DeptDto>> getDepts(Integer pageNum, Integer pageSize, String deptName, String deptPerson, String deptPhone, String deptAddress, String parentName, Integer deptId);
+    Result<PageData<DeptDto>> getDepts(Integer pageNum, Integer pageSize, String deptName, String deptPerson, String deptPhone, String deptAddress, String parentName, Integer deptId, Integer deptStatus);
     
     Result<String> deleteDepts(DeleteIdsReq req);
     

@@ -26,12 +26,13 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private AdminRepository adminRepository;
-    
+
     @Autowired
     private DeptRepository deptRepository;
 
     @Override
-    public Result<PageData<AdminDto>> getAdmins(Integer pageNum, Integer pageSize, String adminName, String adminPhone, String adminEmail, Integer adminStatus, String deptName, Integer parentDept) {
+    public Result<PageData<AdminDto>> getAdmins(Integer pageNum, Integer pageSize, String adminName, String adminPhone,
+            String adminEmail, Integer adminStatus, String deptName, Integer parentDept) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
@@ -50,35 +51,49 @@ public class AdminServiceImpl implements AdminService {
             if (adminStatus != null) {
                 predicates.add(cb.equal(root.get("status"), adminStatus));
             }
-            
+
             if ((deptName != null && !deptName.isEmpty()) || parentDept != null) {
                 List<Dept> depts = deptRepository.findAll();
                 List<Integer> deptIds = depts.stream().filter(d -> {
                     boolean match = true;
-                    if (deptName != null && !deptName.isEmpty() && (d.getDeptName() == null || !d.getDeptName().contains(deptName))) {
+                    if (deptName != null && !deptName.isEmpty()
+                            && (d.getDeptName() == null || !d.getDeptName().contains(deptName))) {
                         match = false;
                     }
-                    if (parentDept != null && (d.getParentDept() == null || !d.getParentDept().equals(parentDept))) {
-                        match = false;
+                    if (parentDept != null) {
+                        boolean isParent = d.getId().equals(parentDept);
+                        boolean isDescendant = false;
+                        if (d.getAncestor() != null && !d.getAncestor().isEmpty()) {
+                            String[] ancestors = d.getAncestor().split(",");
+                            for (String anc : ancestors) {
+                                if (anc.trim().equals(parentDept.toString())) {
+                                    isDescendant = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!isParent && !isDescendant) {
+                            match = false;
+                        }
                     }
                     return match;
                 }).map(Dept::getId).collect(Collectors.toList());
-                
+
                 if (deptIds.isEmpty()) {
                     predicates.add(cb.disjunction());
                 } else {
                     predicates.add(root.get("deptId").in(deptIds));
                 }
             }
-            
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
         Page<Admin> adminPage = adminRepository.findAll(spec, pageable);
         List<Admin> admins = adminPage.getContent();
-        
+
         List<Dept> allDepts = deptRepository.findAll();
-        
+
         List<AdminDto> dtos = admins.stream().map(a -> {
             AdminDto dto = new AdminDto();
             dto.setId(a.getId());
@@ -87,13 +102,13 @@ public class AdminServiceImpl implements AdminService {
             dto.setAdminPhone(a.getAdminPhone());
             dto.setAdminEmail(a.getAdminEmail());
             dto.setAdminLocation(a.getAdminLocation());
-            
+
             if (a.getDeptId() != null) {
                 allDepts.stream().filter(d -> d.getId().equals(a.getDeptId())).findFirst().ifPresent(d -> {
                     dto.setDeptName(d.getDeptName());
                 });
             }
-            
+
             dto.setAdminStatus(a.getStatus());
             dto.setCreateTime(a.getCreateTime());
             dto.setUpdateTime(a.getUpdateTime());
@@ -132,7 +147,7 @@ public class AdminServiceImpl implements AdminService {
         dto.setRemark(a.getRemark());
         dto.setCreateTime(a.getCreateTime());
         dto.setUpdateTime(a.getUpdateTime());
-        
+
         if (a.getDeptId() != null) {
             deptRepository.findById(a.getDeptId()).ifPresent(d -> {
                 dto.setDeptName(d.getDeptName());
@@ -144,24 +159,33 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private void populateAdminFromReq(Admin admin, AdminSaveReq req) {
-        if (req.getAdminName() != null) admin.setAdminName(req.getAdminName());
-        if (req.getAdminPassword() != null && !req.getAdminPassword().equals("******") && !req.getAdminPassword().isEmpty()) {
+        if (req.getAdminName() != null)
+            admin.setAdminName(req.getAdminName());
+        if (req.getAdminPassword() != null && !req.getAdminPassword().equals("******")
+                && !req.getAdminPassword().isEmpty()) {
             admin.setAdminPassword(req.getAdminPassword());
         }
-        if (req.getAdminAvatar() != null) admin.setAdminAvatar(req.getAdminAvatar());
-        if (req.getAdminGender() != null) admin.setAdminGender(req.getAdminGender());
-        if (req.getAdminPhone() != null) admin.setAdminPhone(req.getAdminPhone());
-        if (req.getAdminEmail() != null) admin.setAdminEmail(req.getAdminEmail());
-        if (req.getAdminLocation() != null) admin.setAdminLocation(req.getAdminLocation());
-        if (req.getAdminStatus() != null) admin.setStatus(req.getAdminStatus());
-        if (req.getRemark() != null) admin.setRemark(req.getRemark());
-        
+        if (req.getAdminAvatar() != null)
+            admin.setAdminAvatar(req.getAdminAvatar());
+        if (req.getAdminGender() != null)
+            admin.setAdminGender(req.getAdminGender());
+        if (req.getAdminPhone() != null)
+            admin.setAdminPhone(req.getAdminPhone());
+        if (req.getAdminEmail() != null)
+            admin.setAdminEmail(req.getAdminEmail());
+        if (req.getAdminLocation() != null)
+            admin.setAdminLocation(req.getAdminLocation());
+        if (req.getAdminStatus() != null)
+            admin.setStatus(req.getAdminStatus());
+        if (req.getRemark() != null)
+            admin.setRemark(req.getRemark());
+
         if (req.getDeptCode() != null && !req.getDeptCode().isEmpty()) {
             deptRepository.findByDeptCode(req.getDeptCode()).ifPresent(d -> admin.setDeptId(d.getId()));
         } else if (req.getDeptName() != null && !req.getDeptName().isEmpty()) {
             deptRepository.findByDeptName(req.getDeptName()).ifPresent(d -> admin.setDeptId(d.getId()));
         }
-        
+
         if (admin.getCreateTime() == null) {
             admin.setCreateTime(new Date());
         }
@@ -176,7 +200,7 @@ public class AdminServiceImpl implements AdminService {
         }
         // Ensure admin has a password since non-null constraint
         if (admin.getAdminPassword() == null) {
-            admin.setAdminPassword("123456"); 
+            admin.setAdminPassword("123456");
         }
         populateAdminFromReq(admin, req);
         adminRepository.save(admin);
@@ -201,7 +225,7 @@ public class AdminServiceImpl implements AdminService {
     public Result<String> addAdmin(AdminSaveReq req) {
         Admin admin = new Admin();
         if (admin.getAdminPassword() == null && (req.getAdminPassword() == null || req.getAdminPassword().isEmpty())) {
-            admin.setAdminPassword("123456"); 
+            admin.setAdminPassword("123456");
         }
         populateAdminFromReq(admin, req);
         adminRepository.save(admin);

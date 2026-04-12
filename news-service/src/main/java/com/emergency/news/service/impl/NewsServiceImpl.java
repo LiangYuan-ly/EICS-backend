@@ -19,6 +19,7 @@ import jakarta.persistence.criteria.Predicate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +33,23 @@ public class NewsServiceImpl implements NewsService {
 
     @Autowired
     private NewsRepository newsRepository;
-    
+
     @Autowired
     private AdminRepository adminRepository;
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    public PageResult<NewsDto> getNewsList(Integer pageNum, Integer pageSize, String newsName, String publishCompany, String startTime, String endTime) {
-        PageRequest pageRequest = PageRequest.of(pageNum > 0 ? pageNum - 1 : 0, pageSize, Sort.by(Sort.Direction.DESC, "createTime"));
-        
+    public PageResult<NewsDto> getNewsList(Integer pageNum, Integer pageSize, String newsName, String publishCompany,
+            String startTime, String endTime) {
+        PageRequest pageRequest = PageRequest.of(pageNum > 0 ? pageNum - 1 : 0, pageSize,
+                Sort.by(Sort.Direction.DESC, "createTime"));
+
         Specification<News> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("deleted"), 0));
-            
+
             if (StringUtils.hasText(newsName)) {
                 predicates.add(cb.like(root.get("newsName"), "%" + newsName + "%"));
             }
@@ -54,16 +57,20 @@ public class NewsServiceImpl implements NewsService {
                 predicates.add(cb.like(root.get("publishCompany"), "%" + publishCompany + "%"));
             }
             if (StringUtils.hasText(startTime)) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("publishTime"), LocalDate.parse(startTime, dateFormatter).atStartOfDay()));
+                LocalDateTime start = startTime.contains("T") ? OffsetDateTime.parse(startTime).toLocalDateTime()
+                        : LocalDate.parse(startTime, dateFormatter).atStartOfDay();
+                predicates.add(cb.greaterThanOrEqualTo(root.get("publishTime"), start));
             }
             if (StringUtils.hasText(endTime)) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("publishTime"), LocalDate.parse(endTime, dateFormatter).atTime(23, 59, 59)));
+                LocalDateTime end = endTime.contains("T") ? OffsetDateTime.parse(endTime).toLocalDateTime()
+                        : LocalDate.parse(endTime, dateFormatter).atTime(23, 59, 59);
+                predicates.add(cb.lessThanOrEqualTo(root.get("publishTime"), end));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
         Page<News> page = newsRepository.findAll(spec, pageRequest);
-        
+
         List<NewsDto> dtos = page.getContent().stream().map(this::convertToDto).collect(Collectors.toList());
         return new PageResult<>(dtos, page.getTotalElements());
     }
@@ -122,8 +129,9 @@ public class NewsServiceImpl implements NewsService {
         try {
             String dirPath = System.getProperty("user.dir") + "/uploads/";
             File dir = new File(dirPath);
-            if (!dir.exists()) dir.mkdirs();
-            
+            if (!dir.exists())
+                dir.mkdirs();
+
             String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             File dest = new File(dirPath + filename);
             file.transferTo(dest);

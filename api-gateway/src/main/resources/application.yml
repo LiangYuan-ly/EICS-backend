@@ -1,0 +1,74 @@
+server:
+  port: 8090  # 网关对外端口
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848  # Nacos 地址
+
+    gateway:
+      discovery:
+        locator:
+          enabled: true               # 开启服务发现路由（根据服务名自动路由）
+          lower-case-service-id: true # 服务ID转小写
+
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+      routes:
+        # 1. 新闻管理服务 (news-service) - 优先匹配新闻相关路径
+        - id: news-service
+          uri: lb://news-service
+          predicates:
+            - Path=/api/admin/*news/**, /api/admin/*news, /api/news/**
+
+        # 2. 用户管理服务 (user-service)
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/admin/usersinfo/**, /api/admin/userinfo/**, /api/admin/delusers, /api/admin/updateusers
+
+        # 3. 物资管理服务 (material-service)
+        - id: material-service
+          uri: lb://material-service
+          predicates:
+            - Path=/api/warehouses/**, /api/materials/**, /api/admin/delwarehouses, /api/admin/delmaterials
+
+        # 4. 鉴权与部门/管理员服务 (auth-service) - 作为管理员/部门管理的基础路由
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/admins/**, /api/admin/deladmins, /api/admin/saveadmins, /api/admin/updateadmins, /api/admin/addadmins, /api/depts/**, /api/deptslist, /api/admin/deldepts
+
+        # 5. 事件大屏服务 (event-service)
+        - id: event-service
+          uri: lb://event-service
+          predicates:
+            - Path=/api/emergency-events/**, /api/map/**, /api/dashboard/**
+
+        # 6. AI 决策服务/预案服务 (cbr-service)
+        - id: cbr-service
+          uri: lb://cbr-service
+          predicates:
+            - Path=/api/plans/**, /api/cbr/**
+
+        # 7. 通知服务 (notification-service)
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG  # 调试时开启，上线关闭

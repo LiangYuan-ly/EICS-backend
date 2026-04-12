@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import java.time.Instant;
 
 import jakarta.persistence.criteria.Predicate;
 import java.text.SimpleDateFormat;
@@ -54,13 +56,14 @@ public class UserServiceImpl implements UserService {
             }
             
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                if (startTime != null && !startTime.isEmpty()) {
-                    Date start = sdf.parse(startTime);
+                if (StringUtils.hasText(startTime)) {
+                    Date start = startTime.contains("T") ? Date.from(Instant.parse(startTime)) : 
+                                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
                     predicates.add(cb.greaterThanOrEqualTo(root.get("createTime"), start));
                 }
-                if (endTime != null && !endTime.isEmpty()) {
-                    Date end = sdf.parse(endTime);
+                if (StringUtils.hasText(endTime)) {
+                    Date end = endTime.contains("T") ? Date.from(Instant.parse(endTime)) : 
+                               new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime);
                     predicates.add(cb.lessThanOrEqualTo(root.get("createTime"), end));
                 }
             } catch (Exception e) {

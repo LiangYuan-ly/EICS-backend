@@ -27,7 +27,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     public Result<PageData<DeptDto>> getDepts(Integer pageNum, Integer pageSize, String deptName, String deptPerson,
-            String deptPhone, String deptAddress, String parentName, Integer deptId) {
+            String deptPhone, String deptAddress, String parentName, Integer deptId, Integer deptStatus) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
@@ -48,6 +48,9 @@ public class DeptServiceImpl implements DeptService {
             }
             if (deptId != null) {
                 predicates.add(cb.equal(root.get("id"), deptId));
+            }
+            if (deptStatus != null) {
+                predicates.add(cb.equal(root.get("deptStatus"), deptStatus));
             }
             if (parentName != null && !parentName.isEmpty()) {
                 List<Dept> depts = deptRepository.findAll();
@@ -77,6 +80,8 @@ public class DeptServiceImpl implements DeptService {
             dto.setDeptPhone(d.getDeptPhone());
             dto.setDeptAddress(d.getDeptAddress());
             dto.setDeptResponsibility(d.getDeptResponsibility());
+            dto.setLongitude(d.getLongitude());
+            dto.setLatitude(d.getLatitude());
 
             if (d.getParentDept() != null && d.getParentDept() != 0) {
                 allDepts.stream().filter(p -> p.getId().equals(d.getParentDept())).findFirst().ifPresent(p -> {
@@ -135,6 +140,10 @@ public class DeptServiceImpl implements DeptService {
             dept.setDeptAddress(req.getDeptAddress());
         if (req.getDeptResponsibility() != null)
             dept.setDeptResponsibility(req.getDeptResponsibility());
+        if (req.getLongitude() != null)
+            dept.setLongitude(req.getLongitude());
+        if (req.getLatitude() != null)
+            dept.setLatitude(req.getLatitude());
 
         if (req.getParentName() != null && !req.getParentName().isEmpty()) {
             deptRepository.findByDeptName(req.getParentName()).ifPresent(p -> dept.setParentDept(p.getId()));

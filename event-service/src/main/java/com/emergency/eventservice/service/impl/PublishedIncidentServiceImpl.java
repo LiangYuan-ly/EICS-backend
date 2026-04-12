@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import java.time.Instant;
 
 import jakarta.persistence.criteria.Predicate;
 import java.text.SimpleDateFormat;
@@ -114,12 +115,15 @@ public class PublishedIncidentServiceImpl implements PublishedIncidentService {
             }
 
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 if (startTime != null && !startTime.isEmpty()) {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("occurrenceTime"), sdf.parse(startTime)));
+                    Date start = startTime.contains("T") ? Date.from(Instant.parse(startTime)) : 
+                                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("occurrenceTime"), start));
                 }
                 if (endTime != null && !endTime.isEmpty()) {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("occurrenceTime"), sdf.parse(endTime)));
+                    Date end = endTime.contains("T") ? Date.from(Instant.parse(endTime)) : 
+                               new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime);
+                    predicates.add(cb.lessThanOrEqualTo(root.get("occurrenceTime"), end));
                 }
             } catch (Exception e) {}
 

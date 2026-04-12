@@ -30,4 +30,7 @@ public class DeptDto {
     
     @JsonProperty("dept_responsibility")
     private String deptResponsibility;
+
+    private Double longitude;
+    private Double latitude;
 }

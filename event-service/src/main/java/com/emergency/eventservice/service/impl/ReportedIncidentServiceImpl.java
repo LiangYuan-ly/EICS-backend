@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.Predicate;
+import java.time.Instant;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,13 +67,14 @@ public class ReportedIncidentServiceImpl implements ReportedIncidentService {
             }
 
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 if (startTime != null && !startTime.isEmpty()) {
-                    Date start = sdf.parse(startTime);
+                    Date start = startTime.contains("T") ? Date.from(Instant.parse(startTime)) : 
+                                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
                     predicates.add(cb.greaterThanOrEqualTo(root.get("occurrenceTime"), start));
                 }
                 if (endTime != null && !endTime.isEmpty()) {
-                    Date end = sdf.parse(endTime);
+                    Date end = endTime.contains("T") ? Date.from(Instant.parse(endTime)) : 
+                               new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime);
                     predicates.add(cb.lessThanOrEqualTo(root.get("occurrenceTime"), end));
                 }
             } catch (Exception e) {

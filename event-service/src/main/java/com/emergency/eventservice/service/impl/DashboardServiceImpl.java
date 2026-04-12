@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class DashboardServiceImpl implements DashboardService {
             
             if (status != null && status == 3) passed += count;
             else if (status != null && status == 4) failed += count;
-            else pending += count; // Status 1, 2 or others as pending/reported
+            else pending += count; 
         }
 
         int total = passed + failed + pending;
@@ -59,8 +60,12 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Result<ReportTrendDto> getReportTrend(String startDate, String endDate) {
-        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : LocalDate.now();
-        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : end.minusDays(6);
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? 
+            (endDate.contains("T") ? OffsetDateTime.parse(endDate).toLocalDate() : LocalDate.parse(endDate)) : 
+            LocalDate.now();
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? 
+            (startDate.contains("T") ? OffsetDateTime.parse(startDate).toLocalDate() : LocalDate.parse(startDate)) : 
+            end.minusDays(6);
 
         String sql = "SELECT DATE_FORMAT(create_time, '%Y-%m-%d') as dt, incident_status, COUNT(*) as cnt " +
                 " FROM reported_incidents WHERE deleted = 0 AND DATE(create_time) >= ? AND DATE(create_time) <= ? " +
@@ -103,8 +108,12 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Result<PublishTrendDto> getPublishTrend(String startDate, String endDate) {
-        LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : LocalDate.now();
-        LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : end.minusDays(6);
+        LocalDate end = (endDate != null && !endDate.isEmpty()) ? 
+            (endDate.contains("T") ? OffsetDateTime.parse(endDate).toLocalDate() : LocalDate.parse(endDate)) : 
+            LocalDate.now();
+        LocalDate start = (startDate != null && !startDate.isEmpty()) ? 
+            (startDate.contains("T") ? OffsetDateTime.parse(startDate).toLocalDate() : LocalDate.parse(startDate)) : 
+            end.minusDays(6);
 
         String sql = "SELECT DATE_FORMAT(create_time, '%Y-%m-%d') as dt, COUNT(*) as cnt " +
                 " FROM published_incidents WHERE deleted = 0 AND incident_status = 3 AND DATE(create_time) >= ? AND DATE(create_time) <= ? " +

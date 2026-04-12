@@ -25,8 +25,10 @@ public class DeptController {
             @RequestParam(required = false, name = "dept_phone") String deptPhone,
             @RequestParam(required = false, name = "dept_address") String deptAddress,
             @RequestParam(required = false, name = "parent_name") String parentName,
-            @RequestParam(required = false, name = "dept_id") Integer deptId) {
-        return deptService.getDepts(pageNum, pageSize, deptName, deptPerson, deptPhone, deptAddress, parentName, deptId);
+            @RequestParam(required = false, name = "dept_id") Integer deptId,
+            @RequestParam(required = false, name = "dept_status") Integer deptStatus) {
+        return deptService.getDepts(pageNum, pageSize, deptName, deptPerson, deptPhone, deptAddress, parentName, deptId,
+                deptStatus);
     }
 
     @DeleteMapping("/admin/deldepts")
