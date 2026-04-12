@@ -29,6 +29,12 @@
             <version>2022.0.0.0</version>
         </dependency>
 
+        <!-- Spring Cloud Loadbalancer (必须) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
         <!-- Lombok（可选，用于日志等） -->
         <dependency>
             <groupId>org.projectlombok</groupId>

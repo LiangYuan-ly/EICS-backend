@@ -26,7 +26,8 @@ public class DeptServiceImpl implements DeptService {
     private DeptRepository deptRepository;
 
     @Override
-    public Result<PageData<DeptDto>> getDepts(Integer pageNum, Integer pageSize, String deptName, String deptPerson, String deptPhone, String deptAddress, String parentName, Integer deptId) {
+    public Result<PageData<DeptDto>> getDepts(Integer pageNum, Integer pageSize, String deptName, String deptPerson,
+            String deptPhone, String deptAddress, String parentName, Integer deptId) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
@@ -65,7 +66,7 @@ public class DeptServiceImpl implements DeptService {
 
         Page<Dept> deptPage = deptRepository.findAll(spec, pageable);
         List<Dept> allDepts = deptRepository.findAll();
-        
+
         List<DeptDto> dtos = deptPage.getContent().stream().map(d -> {
             DeptDto dto = new DeptDto();
             dto.setId(d.getId());
@@ -76,7 +77,7 @@ public class DeptServiceImpl implements DeptService {
             dto.setDeptPhone(d.getDeptPhone());
             dto.setDeptAddress(d.getDeptAddress());
             dto.setDeptResponsibility(d.getDeptResponsibility());
-            
+
             if (d.getParentDept() != null && d.getParentDept() != 0) {
                 allDepts.stream().filter(p -> p.getId().equals(d.getParentDept())).findFirst().ifPresent(p -> {
                     dto.setParentName(p.getDeptName());
@@ -120,14 +121,21 @@ public class DeptServiceImpl implements DeptService {
     }
 
     private void fillDeptFromReq(Dept dept, DeptSaveReq req) {
-        if (req.getDeptName() != null) dept.setDeptName(req.getDeptName());
-        if (req.getDeptCode() != null) dept.setDeptCode(req.getDeptCode());
-        if (req.getDeptStatus() != null) dept.setDeptStatus(req.getDeptStatus());
-        if (req.getDeptPerson() != null) dept.setDeptPerson(req.getDeptPerson());
-        if (req.getDeptPhone() != null) dept.setDeptPhone(req.getDeptPhone());
-        if (req.getDeptAddress() != null) dept.setDeptAddress(req.getDeptAddress());
-        if (req.getDeptResponsibility() != null) dept.setDeptResponsibility(req.getDeptResponsibility());
-        
+        if (req.getDeptName() != null)
+            dept.setDeptName(req.getDeptName());
+        if (req.getDeptCode() != null)
+            dept.setDeptCode(req.getDeptCode());
+        if (req.getDeptStatus() != null)
+            dept.setDeptStatus(req.getDeptStatus());
+        if (req.getDeptPerson() != null)
+            dept.setDeptPerson(req.getDeptPerson());
+        if (req.getDeptPhone() != null)
+            dept.setDeptPhone(req.getDeptPhone());
+        if (req.getDeptAddress() != null)
+            dept.setDeptAddress(req.getDeptAddress());
+        if (req.getDeptResponsibility() != null)
+            dept.setDeptResponsibility(req.getDeptResponsibility());
+
         if (req.getParentName() != null && !req.getParentName().isEmpty()) {
             deptRepository.findByDeptName(req.getParentName()).ifPresent(p -> dept.setParentDept(p.getId()));
         } else {
@@ -147,9 +155,11 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     public Result<String> updateDept(DeptSaveReq req) {
-        if (req.getId() == null || req.getId() <= 0) return Result.error("缺少ID");
+        if (req.getId() == null || req.getId() <= 0)
+            return Result.error("缺少ID");
         Dept dept = deptRepository.findById(req.getId()).orElse(null);
-        if (dept == null) return Result.error("机构不存在");
+        if (dept == null)
+            return Result.error("机构不存在");
         fillDeptFromReq(dept, req);
         deptRepository.save(dept);
         return Result.success(null, "修改机构成功");
@@ -160,15 +170,16 @@ public class DeptServiceImpl implements DeptService {
         List<Dept> depts = deptRepository.findAll();
         Map<Integer, List<Dept>> grouped = depts.stream()
                 .collect(Collectors.groupingBy(d -> d.getParentDept() != null ? d.getParentDept() : 0));
-        
+
         List<DeptTreeDto> roots = buildTree(grouped, 0);
         return Result.success(roots, "操作成功");
     }
 
     private List<DeptTreeDto> buildTree(Map<Integer, List<Dept>> grouped, Integer parentId) {
         List<Dept> children = grouped.getOrDefault(parentId, new ArrayList<>());
-        if (children.isEmpty()) return null;
-        
+        if (children.isEmpty())
+            return null;
+
         return children.stream().map(d -> {
             DeptTreeDto dto = new DeptTreeDto();
             dto.setId(String.valueOf(d.getId()));
@@ -183,13 +194,13 @@ public class DeptServiceImpl implements DeptService {
         Specification<Dept> spec = (root, query, cb) -> {
             if (deptName != null && !deptName.isEmpty()) {
                 return cb.or(
-                    cb.like(root.get("deptName"), "%" + deptName + "%"),
-                    cb.like(root.get("deptCode"), "%" + deptName + "%")
-                );
+                        cb.like(root.get("deptName"), "%" + deptName + "%"),
+                        cb.like(root.get("deptCode"), "%" + deptName + "%"));
             }
             return cb.conjunction();
         };
-        Page<Dept> page = deptRepository.findAll(spec, PageRequest.of(0, pageSize != null && pageSize > 0 ? pageSize : 10));
+        Page<Dept> page = deptRepository.findAll(spec,
+                PageRequest.of(0, pageSize != null && pageSize > 0 ? pageSize : 10));
         List<DeptBasicDto> dtos = page.getContent().stream().map(d -> {
             DeptBasicDto dto = new DeptBasicDto();
             dto.setId(d.getId());
