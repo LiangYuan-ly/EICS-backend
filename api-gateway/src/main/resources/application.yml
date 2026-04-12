@@ -31,43 +31,43 @@ spring:
         - id: news-service
           uri: lb://news-service
           predicates:
-            - Path=/api/admin/*news/**, /api/admin/*news, /api/news/**
+            - Path=/api/admin/*news/**, /api/admin/*news, /api/news/**, /api/news
 
         # 2. 用户管理服务 (user-service)
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/api/admin/usersinfo/**, /api/admin/userinfo/**, /api/admin/delusers, /api/admin/updateusers
+            - Path=/api/admin/usersinfo/**, /api/admin/usersinfo, /api/admin/userinfo/**, /api/admin/userinfo, /api/admin/delusers, /api/admin/updateusers
 
         # 3. 物资管理服务 (material-service)
         - id: material-service
           uri: lb://material-service
           predicates:
-            - Path=/api/warehouses/**, /api/materials/**, /api/admin/delwarehouses, /api/admin/delmaterials
+            - Path=/api/warehouses/**, /api/warehouses, /api/materials/**, /api/materials, /api/admin/delwarehouses, /api/admin/delmaterials
 
         # 4. 鉴权与部门/管理员服务 (auth-service) - 作为管理员/部门管理的基础路由
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/api/admins/**, /api/admin/deladmins, /api/admin/saveadmins, /api/admin/updateadmins, /api/admin/addadmins, /api/depts/**, /api/deptslist, /api/admin/deldepts
+            - Path=/api/admins/**, /api/admins, /api/admin/deladmins, /api/admin/saveadmins, /api/admin/updateadmins, /api/admin/addadmins, /api/depts/**, /api/depts, /api/deptslist, /api/admin/deldepts
 
         # 5. 事件大屏服务 (event-service)
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/emergency-events/**, /api/map/**, /api/dashboard/**
+            - Path=/api/emergency-events/**, /api/emergency-events, /api/map/**, /api/map, /api/dashboard/**, /api/dashboard
 
         # 6. AI 决策服务/预案服务 (cbr-service)
         - id: cbr-service
           uri: lb://cbr-service
           predicates:
-            - Path=/api/plans/**, /api/cbr/**
+            - Path=/api/plans/**, /api/plans, /api/cbr/**, /api/cbr
 
         # 7. 通知服务 (notification-service)
         - id: notification-service
           uri: lb://notification-service
           predicates:
-            - Path=/api/notifications/**
+            - Path=/api/notifications/**, /api/notifications
 
 logging:
   level:

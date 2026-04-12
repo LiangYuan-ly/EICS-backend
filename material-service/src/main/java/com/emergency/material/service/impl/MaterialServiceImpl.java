@@ -42,7 +42,8 @@ public class MaterialServiceImpl implements MaterialService {
     private MaterialInoutRepository materialInoutRepository;
 
     @Override
-    public Result<PageData<MaterialDto>> getMaterials(Integer pageSize, Integer pageNum, String materialName, String categoryName, String warehouseName, String manufacturer, Integer materialStatus) {
+    public Result<PageData<MaterialDto>> getMaterials(Integer pageSize, Integer pageNum, String materialName,
+            String categoryName, String warehouseName, String manufacturer, Integer materialStatus) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
@@ -63,7 +64,7 @@ public class MaterialServiceImpl implements MaterialService {
                         .filter(c -> c.getCategoryName() != null && c.getCategoryName().contains(categoryName))
                         .map(Category::getCategoryCode)
                         .collect(Collectors.toList());
-                if(cCodes.isEmpty()){
+                if (cCodes.isEmpty()) {
                     predicates.add(cb.equal(root.get("materialCategory"), "NON_EXISTENT"));
                 } else {
                     predicates.add(root.get("materialCategory").in(cCodes));
@@ -74,9 +75,9 @@ public class MaterialServiceImpl implements MaterialService {
                         .filter(w -> w.getWarehouseName() != null && w.getWarehouseName().contains(warehouseName))
                         .map(Warehouse::getWarehouseCode)
                         .collect(Collectors.toList());
-                if(wCodes.isEmpty()){
+                if (wCodes.isEmpty()) {
                     predicates.add(cb.equal(root.get("materialWarehouse"), "NON_EXISTENT"));
-                } else{
+                } else {
                     predicates.add(root.get("materialWarehouse").in(wCodes));
                 }
             }
@@ -95,7 +96,7 @@ public class MaterialServiceImpl implements MaterialService {
         m.setMaterialCode(req.getMaterialCode());
         m.setMaterialName(req.getMaterialName());
         m.setMaterialCategory(getCategoryCodeByName(req.getCategoryName()));
-        m.setMaterialWarehouse(req.getWarehouseCode()); 
+        m.setMaterialWarehouse(req.getWarehouseCode());
         m.setMaterialBatchNo(req.getMaterialBatchNo());
         m.setProducedTime(req.getProduceTime());
         m.setEffectiveTime(req.getEffectiveTime());
@@ -113,23 +114,38 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Override
     public Result<String> updateMaterial(MaterialDto req) {
-        if(req.getId() == null) return Result.error("缺少物资ID");
+        if (req.getId() == null)
+            return Result.error("缺少物资ID");
         Material m = materialRepository.findById(req.getId()).orElse(null);
-        if(m == null) return Result.error("物资不存在");
+        if (m == null)
+            return Result.error("物资不存在");
 
-        if(req.getMaterialCode() != null) m.setMaterialCode(req.getMaterialCode());
-        if(req.getMaterialName() != null) m.setMaterialName(req.getMaterialName());
-        if(req.getCategoryName() != null) m.setMaterialCategory(getCategoryCodeByName(req.getCategoryName()));
-        if(req.getWarehouseCode() != null) m.setMaterialWarehouse(req.getWarehouseCode());
-        if(req.getMaterialBatchNo() != null) m.setMaterialBatchNo(req.getMaterialBatchNo());
-        if(req.getProduceTime() != null) m.setProducedTime(req.getProduceTime());
-        if(req.getEffectiveTime() != null) m.setEffectiveTime(req.getEffectiveTime());
-        if(req.getStockQuantity() != null) m.setStockQuantity(req.getStockQuantity());
-        if(req.getSecurityQuantity() != null) m.setSecurityQuantity(req.getSecurityQuantity());
-        if(req.getSpecification() != null) m.setSpecification(req.getSpecification());
-        if(req.getUnit() != null) m.setUnit(req.getUnit());
-        if(req.getManufacturer() != null) m.setManufacturer(req.getManufacturer());
-        if(req.getMaterialStatus() != null) m.setMaterialStatus(req.getMaterialStatus());
+        if (req.getMaterialCode() != null)
+            m.setMaterialCode(req.getMaterialCode());
+        if (req.getMaterialName() != null)
+            m.setMaterialName(req.getMaterialName());
+        if (req.getCategoryName() != null)
+            m.setMaterialCategory(getCategoryCodeByName(req.getCategoryName()));
+        if (req.getWarehouseCode() != null)
+            m.setMaterialWarehouse(req.getWarehouseCode());
+        if (req.getMaterialBatchNo() != null)
+            m.setMaterialBatchNo(req.getMaterialBatchNo());
+        if (req.getProduceTime() != null)
+            m.setProducedTime(req.getProduceTime());
+        if (req.getEffectiveTime() != null)
+            m.setEffectiveTime(req.getEffectiveTime());
+        if (req.getStockQuantity() != null)
+            m.setStockQuantity(req.getStockQuantity());
+        if (req.getSecurityQuantity() != null)
+            m.setSecurityQuantity(req.getSecurityQuantity());
+        if (req.getSpecification() != null)
+            m.setSpecification(req.getSpecification());
+        if (req.getUnit() != null)
+            m.setUnit(req.getUnit());
+        if (req.getManufacturer() != null)
+            m.setManufacturer(req.getManufacturer());
+        if (req.getMaterialStatus() != null)
+            m.setMaterialStatus(req.getMaterialStatus());
         m.setUpdateTime(new Date());
 
         materialRepository.save(m);
@@ -138,7 +154,7 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Override
     public Result<String> deleteMaterials(IdsReq req) {
-        if(req != null && req.getIds() != null && !req.getIds().isEmpty()){
+        if (req != null && req.getIds() != null && !req.getIds().isEmpty()) {
             materialRepository.deleteAllById(req.getIds());
         }
         return Result.success(null, "删除成功");
@@ -147,38 +163,58 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public Result<MaterialDto> getMaterialById(Integer id) {
         Material m = materialRepository.findById(id).orElse(null);
-        if(m == null) return Result.error("物资未找到");
+        if (m == null)
+            return Result.error("物资未找到");
         return Result.success(convertToDto(m), "查询成功");
     }
 
     @Override
     public Result<PageData<CategoryDto>> getCategory(String pageSize, String category) {
-        List<Category> list = categoryRepository.findAll();
-        if(category != null && !category.isEmpty()){
-            list = list.stream().filter(c -> c.getCategoryName() != null && c.getCategoryName().contains(category)).collect(Collectors.toList());
+        Integer size = null;
+        try {
+            if (pageSize != null && !pageSize.isEmpty()) {
+                size = Integer.parseInt(pageSize);
+            }
+        } catch (NumberFormatException e) {
+            // Use default size if parsing fails
         }
-        
-        List<CategoryDto> dtos = list.stream().map(c -> {
+
+        Specification<Category> spec = (root, query, cb) -> {
+            if (category != null && !category.isEmpty()) {
+                return cb.or(
+                        cb.like(root.get("categoryName"), "%" + category + "%"),
+                        cb.like(root.get("categoryCode"), "%" + category + "%"));
+            }
+            return cb.conjunction();
+        };
+
+        Pageable pageable = PageRequest.of(0, (size != null && size > 0) ? size : 10);
+        Page<Category> paged = categoryRepository.findAll(spec, pageable);
+
+        List<CategoryDto> dtos = paged.getContent().stream().map(c -> {
             CategoryDto d = new CategoryDto();
             d.setCategoryCode(c.getCategoryCode());
             d.setCategoryName(c.getCategoryName());
             return d;
         }).collect(Collectors.toList());
 
-        return Result.success(new PageData<>(dtos, (long)dtos.size()), "操作成功");
+        return Result.success(new PageData<>(dtos, paged.getTotalElements()), "操作成功");
     }
 
     @Override
     @Transactional
     public Result<String> inoutMaterial(MaterialInoutReq req) {
-        if(req.getMaterialId() == null || req.getWarehouseId() == null || req.getInOut() == null || req.getNum() == null){
+        if (req.getMaterialId() == null || req.getWarehouseId() == null || req.getInOut() == null
+                || req.getNum() == null) {
             return Result.error("参数不完整");
         }
         Material m = materialRepository.findById(req.getMaterialId()).orElse(null);
-        if(m == null) return Result.error("物资不存在");
+        if (m == null)
+            return Result.error("物资不存在");
 
-        if(req.getInOut() == 0){ // 出库
-            if(m.getStockQuantity() < req.getNum()) return Result.error("库存不足");
+        if (req.getInOut() == 0) { // 出库
+            if (m.getStockQuantity() < req.getNum())
+                return Result.error("库存不足");
             m.setStockQuantity(m.getStockQuantity() - req.getNum());
         } else { // 入库
             m.setStockQuantity(m.getStockQuantity() + req.getNum());
@@ -199,7 +235,8 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     private String getCategoryCodeByName(String categoryName) {
-        if (categoryName == null) return null;
+        if (categoryName == null)
+            return null;
         return categoryRepository.findAll().stream()
                 .filter(c -> categoryName.equals(c.getCategoryName()))
                 .map(Category::getCategoryCode)
@@ -212,7 +249,7 @@ public class MaterialServiceImpl implements MaterialService {
         d.setId(m.getId());
         d.setMaterialCode(m.getMaterialCode());
         d.setMaterialName(m.getMaterialName());
-        
+
         if (m.getMaterialCategory() != null) {
             Category c = categoryRepository.findById(m.getMaterialCategory()).orElse(null);
             if (c != null) {
@@ -221,13 +258,13 @@ public class MaterialServiceImpl implements MaterialService {
                 d.setCategoryName(m.getMaterialCategory());
             }
         }
-        
+
         if (m.getMaterialWarehouse() != null) {
             d.setWarehouseCode(m.getMaterialWarehouse());
             Warehouse w = warehouseRepository.findAll().stream()
                     .filter(wh -> m.getMaterialWarehouse().equals(wh.getWarehouseCode()))
                     .findFirst().orElse(null);
-            if(w != null){
+            if (w != null) {
                 d.setWarehouseName(w.getWarehouseName());
                 d.setWarehouseAddress(w.getWarehouseAddress());
                 d.setWarehousePerson(w.getWarehousePerson());

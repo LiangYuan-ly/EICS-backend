@@ -27,7 +27,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     private WarehouseRepository warehouseRepository;
 
     @Override
-    public Result<PageData<WarehouseDto>> getWarehouses(Integer pageSize, Integer pageNum, String warehouseCode, String warehouseName, String warehouseAddress, String warehousePerson, String warehousePhone, Integer warehouseStatus, Integer warehouseId) {
+    public Result<PageData<WarehouseDto>> getWarehouses(Integer pageSize, Integer pageNum, String warehouseCode,
+            String warehouseName, String warehouseAddress, String warehousePerson, String warehousePhone,
+            Integer warehouseStatus, Integer warehouseId) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
@@ -35,10 +37,12 @@ public class WarehouseServiceImpl implements WarehouseService {
         Specification<Warehouse> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (warehouseCode != null && !warehouseCode.isEmpty()) {
-                predicates.add(cb.equal(root.get("warehouseCode"), warehouseCode));
+                predicates.add(cb.like(root.get("warehouseCode"), "%" + warehouseCode + "%"));
             }
             if (warehouseName != null && !warehouseName.isEmpty()) {
-                predicates.add(cb.like(root.get("warehouseName"), "%" + warehouseName + "%"));
+                predicates.add(cb.or(
+                        cb.like(root.get("warehouseName"), "%" + warehouseName + "%"),
+                        cb.like(root.get("warehouseCode"), "%" + warehouseName + "%")));
             }
             if (warehouseAddress != null && !warehouseAddress.isEmpty()) {
                 predicates.add(cb.like(root.get("warehouseAddress"), "%" + warehouseAddress + "%"));
@@ -89,20 +93,31 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Result<String> updateWarehouse(WarehouseDto req) {
-        if (req.getId() == null) return Result.error("缺少ID");
+        if (req.getId() == null)
+            return Result.error("缺少ID");
         Warehouse w = warehouseRepository.findById(req.getId()).orElse(null);
-        if (w == null) return Result.error("仓库不存在");
-        
-        if (req.getWarehouseCode() != null) w.setWarehouseCode(req.getWarehouseCode());
-        if (req.getWarehouseName() != null) w.setWarehouseName(req.getWarehouseName());
-        if (req.getWarehouseAddress() != null) w.setWarehouseAddress(req.getWarehouseAddress());
-        if (req.getLongitude() != null) w.setLongitude(req.getLongitude());
-        if (req.getLatitude() != null) w.setLatitude(req.getLatitude());
-        if (req.getWarehousePerson() != null) w.setWarehousePerson(req.getWarehousePerson());
-        if (req.getWarehousePhone() != null) w.setWarehousePhone(req.getWarehousePhone());
-        if (req.getWarehouseStatus() != null) w.setWarehouseStatus(req.getWarehouseStatus());
-        if (req.getRemark() != null) w.setRemark(req.getRemark());
-        
+        if (w == null)
+            return Result.error("仓库不存在");
+
+        if (req.getWarehouseCode() != null)
+            w.setWarehouseCode(req.getWarehouseCode());
+        if (req.getWarehouseName() != null)
+            w.setWarehouseName(req.getWarehouseName());
+        if (req.getWarehouseAddress() != null)
+            w.setWarehouseAddress(req.getWarehouseAddress());
+        if (req.getLongitude() != null)
+            w.setLongitude(req.getLongitude());
+        if (req.getLatitude() != null)
+            w.setLatitude(req.getLatitude());
+        if (req.getWarehousePerson() != null)
+            w.setWarehousePerson(req.getWarehousePerson());
+        if (req.getWarehousePhone() != null)
+            w.setWarehousePhone(req.getWarehousePhone());
+        if (req.getWarehouseStatus() != null)
+            w.setWarehouseStatus(req.getWarehouseStatus());
+        if (req.getRemark() != null)
+            w.setRemark(req.getRemark());
+
         w.setUpdateTime(new Date());
         warehouseRepository.save(w);
         return Result.success(null, "修改成功");

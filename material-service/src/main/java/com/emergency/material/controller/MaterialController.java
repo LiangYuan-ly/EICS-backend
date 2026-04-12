@@ -26,7 +26,8 @@ public class MaterialController {
             @RequestParam(required = false, name = "warehouse_name") String warehouseName,
             @RequestParam(required = false, name = "manufacturer") String manufacturer,
             @RequestParam(required = false, name = "material_status") Integer materialStatus) {
-        return materialService.getMaterials(pageSize, pageNum, materialName, categoryName, warehouseName, manufacturer, materialStatus);
+        return materialService.getMaterials(pageSize, pageNum, materialName, categoryName, warehouseName, manufacturer,
+                materialStatus);
     }
 
     @PostMapping("/materials/add")

@@ -139,6 +139,7 @@ CREATE TABLE `materials` (
     `unit` VARCHAR(20) COMMENT '计量单位',
     `manufacturer` VARCHAR(50) COMMENT '生产厂家',
     `material_status` INT DEFAULT 1,
+    `remark` VARCHAR(255),
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`material_code`),
@@ -156,6 +157,15 @@ CREATE TABLE `material_inout` (
     `admin_id` INT NOT NULL COMMENT '操作员ID',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='出入库明细表';
+
+-- 物资分类表
+CREATE TABLE IF NOT EXISTS material_category (
+    CATEGORY_CODE VARCHAR(20) NOT NULL COMMENT '代码',
+    CATEGORY_NAME VARCHAR(255) DEFAULT NULL COMMENT '类别名称',
+    REMARK VARCHAR(1000) DEFAULT NULL COMMENT '说明',
+    PARENT_CODE VARCHAR(20) DEFAULT NULL COMMENT '父代码',
+    PRIMARY KEY (CATEGORY_CODE)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应急物资分类表(GB/T 38565-2020)';
 
 -- 10. 应急预案表 (plans)
 CREATE TABLE `plans` (
@@ -197,6 +207,17 @@ CREATE TABLE `published_attachments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统附件表';
 
 CREATE TABLE `plan_attachments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `attachment_name` VARCHAR(128) COMMENT '文件名',
+    `attachment_url` VARCHAR(255) COMMENT '文件路径',
+    `attachment_type` INT COMMENT '1:图片, 2:视频, 3:文档',
+    `attachment_size` INT COMMENT '大小(KB)',
+    `target_id` INT NOT NULL COMMENT '关联的业务ID(上报/发布/预案ID)',
+    `target_type` VARCHAR(20) NOT NULL COMMENT '业务类型(REPORT/PUBLISH/PLAN)',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统附件表';
+
+CREATE TABLE `news_attachments` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `attachment_name` VARCHAR(128) COMMENT '文件名',
     `attachment_url` VARCHAR(255) COMMENT '文件路径',

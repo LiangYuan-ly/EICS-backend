@@ -26,7 +26,8 @@ public class WarehouseController {
             @RequestParam(required = false, name = "warehouse_phone") String warehousePhone,
             @RequestParam(required = false, name = "warehouse_status") Integer warehouseStatus,
             @RequestParam(required = false, name = "warehouse_id") Integer warehouseId) {
-        return warehouseService.getWarehouses(pageSize, pageNum, warehouseCode, warehouseName, warehouseAddress, warehousePerson, warehousePhone, warehouseStatus, warehouseId);
+        return warehouseService.getWarehouses(pageSize, pageNum, warehouseCode, warehouseName, warehouseAddress,
+                warehousePerson, warehousePhone, warehouseStatus, warehouseId);
     }
 
     @DeleteMapping("/admin/delwarehouses")

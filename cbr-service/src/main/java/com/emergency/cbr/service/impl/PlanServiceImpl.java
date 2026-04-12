@@ -44,26 +44,34 @@ public class PlanServiceImpl implements PlanService {
     private DeptRepository deptRepository;
 
     @Override
-    public Result<PageData<PlanDto>> getPlans(Integer pageNum, Integer pageSize, String planCode, String planTitle, Integer planType, String categoryName, Integer planLevel, String deptName, Integer status) {
+    public Result<PageData<PlanDto>> getPlans(Integer pageNum, Integer pageSize, String planCode, String planTitle,
+            Integer planType, String categoryName, Integer planLevel, String deptName, Integer status) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<Plan> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            if (planCode != null && !planCode.isEmpty()) predicates.add(cb.like(root.get("planCode"), "%" + planCode + "%"));
-            if (planTitle != null && !planTitle.isEmpty()) predicates.add(cb.like(root.get("planTitle"), "%" + planTitle + "%"));
-            if (planType != null) predicates.add(cb.equal(root.get("planType"), planType));
-            if (planLevel != null) predicates.add(cb.equal(root.get("planLevel"), planLevel));
-            if (status != null) predicates.add(cb.equal(root.get("planStatus"), status));
+            if (planCode != null && !planCode.isEmpty())
+                predicates.add(cb.like(root.get("planCode"), "%" + planCode + "%"));
+            if (planTitle != null && !planTitle.isEmpty())
+                predicates.add(cb.like(root.get("planTitle"), "%" + planTitle + "%"));
+            if (planType != null)
+                predicates.add(cb.equal(root.get("planType"), planType));
+            if (planLevel != null)
+                predicates.add(cb.equal(root.get("planLevel"), planLevel));
+            if (status != null)
+                predicates.add(cb.equal(root.get("planStatus"), status));
 
             if (categoryName != null && !categoryName.isEmpty()) {
                 List<String> codes = categoryRepository.findAll().stream()
                         .filter(c -> c.getCategoryName() != null && c.getCategoryName().contains(categoryName))
                         .map(Category::getCategoryCode)
                         .collect(Collectors.toList());
-                if (!codes.isEmpty()) predicates.add(root.get("categoryCode").in(codes));
-                else predicates.add(cb.equal(root.get("categoryCode"), "NON_EXIST"));
+                if (!codes.isEmpty())
+                    predicates.add(root.get("categoryCode").in(codes));
+                else
+                    predicates.add(cb.equal(root.get("categoryCode"), "NON_EXIST"));
             }
 
             if (deptName != null && !deptName.isEmpty()) {
@@ -71,8 +79,10 @@ public class PlanServiceImpl implements PlanService {
                         .filter(d -> d.getDeptName() != null && d.getDeptName().contains(deptName))
                         .map(Dept::getId)
                         .collect(Collectors.toList());
-                if (!dIds.isEmpty()) predicates.add(root.get("deptId").in(dIds));
-                else predicates.add(cb.equal(root.get("deptId"), -1));
+                if (!dIds.isEmpty())
+                    predicates.add(root.get("deptId").in(dIds));
+                else
+                    predicates.add(cb.equal(root.get("deptId"), -1));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -93,14 +103,14 @@ public class PlanServiceImpl implements PlanService {
         p.setCategoryCode(req.getCategoryCode());
         p.setPlanLevel(req.getPlanLevel());
         p.setDeptId(req.getDeptId());
-        
+
         if (req.getPublishTime() != null && !req.getPublishTime().isEmpty()) {
             try {
                 SimpleDateFormat formatter;
                 if (req.getPublishTime().length() == 10) {
-                     formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    formatter = new SimpleDateFormat("yyyy-MM-dd");
                 } else {
-                     formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 }
                 p.setPublishTime(formatter.parse(req.getPublishTime()));
             } catch (ParseException e) {
@@ -129,28 +139,39 @@ public class PlanServiceImpl implements PlanService {
     @Override
     @Transactional
     public Result<String> updatePlan(PlanDto req) {
-        if (req.getId() == null) return Result.error("ID不能为空");
+        if (req.getId() == null)
+            return Result.error("ID不能为空");
         Plan p = planRepository.findById(req.getId()).orElse(null);
-        if (p == null) return Result.error("数据不存在");
+        if (p == null)
+            return Result.error("数据不存在");
 
-        if (req.getPlanCode() != null) p.setPlanCode(req.getPlanCode());
-        if (req.getPlanTitle() != null) p.setPlanTitle(req.getPlanTitle());
-        if (req.getPlanType() != null) p.setPlanType(req.getPlanType());
-        if (req.getCategoryCode() != null) p.setCategoryCode(req.getCategoryCode());
-        if (req.getPlanLevel() != null) p.setPlanLevel(req.getPlanLevel());
-        if (req.getDeptId() != null) p.setDeptId(req.getDeptId());
-        if (req.getStatus() != null) p.setPlanStatus(req.getStatus());
-        if (req.getPlanUrl() != null) p.setPlanUrl(req.getPlanUrl());
-        
+        if (req.getPlanCode() != null)
+            p.setPlanCode(req.getPlanCode());
+        if (req.getPlanTitle() != null)
+            p.setPlanTitle(req.getPlanTitle());
+        if (req.getPlanType() != null)
+            p.setPlanType(req.getPlanType());
+        if (req.getCategoryCode() != null)
+            p.setCategoryCode(req.getCategoryCode());
+        if (req.getPlanLevel() != null)
+            p.setPlanLevel(req.getPlanLevel());
+        if (req.getDeptId() != null)
+            p.setDeptId(req.getDeptId());
+        if (req.getStatus() != null)
+            p.setPlanStatus(req.getStatus());
+        if (req.getPlanUrl() != null)
+            p.setPlanUrl(req.getPlanUrl());
+
         if (req.getPublishTime() != null && !req.getPublishTime().isEmpty()) {
             try {
-                SimpleDateFormat formatter = req.getPublishTime().length() == 10 ? new SimpleDateFormat("yyyy-MM-dd") : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat formatter = req.getPublishTime().length() == 10 ? new SimpleDateFormat("yyyy-MM-dd")
+                        : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 p.setPublishTime(formatter.parse(req.getPublishTime()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        
+
         p.setUpdateTime(new Date());
         planRepository.save(p);
 
@@ -160,7 +181,7 @@ public class PlanServiceImpl implements PlanService {
                 old.setTargetId(null);
                 planAttachmentRepository.save(old);
             }
-            
+
             PlanAttachment attachment = planAttachmentRepository.findById(req.getAttachmentId()).orElse(null);
             if (attachment != null) {
                 attachment.setTargetId(p.getId());
@@ -168,7 +189,7 @@ public class PlanServiceImpl implements PlanService {
                 planAttachmentRepository.save(attachment);
             }
         }
-        
+
         return Result.success(null, "修改成功");
     }
 
@@ -183,17 +204,20 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public Result<PlanDto> getPlanById(Integer id) {
         Plan p = planRepository.findById(id).orElse(null);
-        if (p == null) return Result.error("未找到详情");
+        if (p == null)
+            return Result.error("未找到详情");
         return Result.success(convertToDto(p), "查询预案详情成功");
     }
 
     @Override
     public Result<Map<String, Object>> uploadPlan(MultipartFile file) {
-        if (file.isEmpty()) return Result.error("空文件");
+        if (file.isEmpty())
+            return Result.error("空文件");
         try {
             String dirPath = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
             File dir = new File(dirPath);
-            if (!dir.exists()) dir.mkdirs();
+            if (!dir.exists())
+                dir.mkdirs();
 
             String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File dest = new File(dirPath + filename);
@@ -207,9 +231,9 @@ public class PlanServiceImpl implements PlanService {
             PlanAttachment pa = new PlanAttachment();
             pa.setAttachmentName(file.getOriginalFilename());
             pa.setAttachmentUrl(url);
-            pa.setAttachmentType(3); 
+            pa.setAttachmentType(3);
             pa.setAttachmentSize((int) (file.getSize() / 1024));
-            pa.setTargetId(0); 
+            pa.setTargetId(0);
             pa.setTargetType("PLAN");
             pa.setCreateTime(new Date());
 
@@ -240,7 +264,8 @@ public class PlanServiceImpl implements PlanService {
         dto.setPlanType(p.getPlanType());
         dto.setCategoryCode(p.getCategoryCode());
         dto.setPlanLevel(p.getPlanLevel());
-        if (p.getPublishTime() != null) dto.setPublishTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(p.getPublishTime()));
+        if (p.getPublishTime() != null)
+            dto.setPublishTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(p.getPublishTime()));
         dto.setDeptId(p.getDeptId());
         dto.setStatus(p.getPlanStatus());
         dto.setPlanUrl(p.getPlanUrl());
@@ -249,7 +274,8 @@ public class PlanServiceImpl implements PlanService {
 
         if (p.getCategoryCode() != null) {
             Category c = categoryRepository.findById(p.getCategoryCode()).orElse(null);
-            if (c != null) dto.setCategoryName(c.getCategoryName());
+            if (c != null)
+                dto.setCategoryName(c.getCategoryName());
         }
 
         if (p.getDeptId() != null) {

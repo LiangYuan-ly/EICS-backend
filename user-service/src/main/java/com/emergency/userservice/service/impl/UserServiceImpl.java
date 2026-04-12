@@ -35,7 +35,8 @@ public class UserServiceImpl implements UserService {
     private DeptRepository deptRepository;
 
     @Override
-    public Result<PageData<UserListDto>> getUsers(Integer pageNum, Integer pageSize, String uname, String startTime, String endTime, String phone, String location, String deptName, Integer status) {
+    public Result<PageData<UserListDto>> getUsers(Integer pageNum, Integer pageSize, String uname, String startTime,
+            String endTime, String phone, String location, String deptName, Integer status) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
         Pageable pageable = PageRequest.of(page, size);
@@ -54,16 +55,16 @@ public class UserServiceImpl implements UserService {
             if (status != null) {
                 predicates.add(cb.equal(root.get("status"), status));
             }
-            
+
             try {
                 if (StringUtils.hasText(startTime)) {
-                    Date start = startTime.contains("T") ? Date.from(Instant.parse(startTime)) : 
-                                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
+                    Date start = startTime.contains("T") ? Date.from(Instant.parse(startTime))
+                            : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
                     predicates.add(cb.greaterThanOrEqualTo(root.get("createTime"), start));
                 }
                 if (StringUtils.hasText(endTime)) {
-                    Date end = endTime.contains("T") ? Date.from(Instant.parse(endTime)) : 
-                               new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime);
+                    Date end = endTime.contains("T") ? Date.from(Instant.parse(endTime))
+                            : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime);
                     predicates.add(cb.lessThanOrEqualTo(root.get("createTime"), end));
                 }
             } catch (Exception e) {
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
         Page<User> userPage = userRepository.findAll(spec, pageable);
         List<User> users = userPage.getContent();
-        
+
         List<Dept> allDepts = deptRepository.findAll();
 
         List<UserListDto> dtos = users.stream().map(u -> {
@@ -136,14 +137,21 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return Result.error(404, "用户不存在");
         }
-        
-        if (req.getUserid() != null) user.setUserid(req.getUserid());
-        if (req.getUname() != null) user.setUname(req.getUname());
-        if (req.getAvatar() != null) user.setAvatar(req.getAvatar());
-        if (req.getGender() != null) user.setGender(req.getGender());
-        if (req.getPhone() != null) user.setPhone(req.getPhone());
-        if (req.getLocation() != null) user.setLocation(req.getLocation());
-        if (req.getStatus() != null) user.setStatus(req.getStatus());
+
+        if (req.getUserid() != null)
+            user.setUserid(req.getUserid());
+        if (req.getUname() != null)
+            user.setUname(req.getUname());
+        if (req.getAvatar() != null)
+            user.setAvatar(req.getAvatar());
+        if (req.getGender() != null)
+            user.setGender(req.getGender());
+        if (req.getPhone() != null)
+            user.setPhone(req.getPhone());
+        if (req.getLocation() != null)
+            user.setLocation(req.getLocation());
+        if (req.getStatus() != null)
+            user.setStatus(req.getStatus());
 
         if (req.getDeptName() != null && !req.getDeptName().isEmpty()) {
             deptRepository.findByDeptName(req.getDeptName()).ifPresent(d -> user.setDeptid(d.getId()));
