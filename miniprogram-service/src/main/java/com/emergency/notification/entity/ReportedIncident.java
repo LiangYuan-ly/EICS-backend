@@ -1,11 +1,6 @@
 package com.emergency.notification.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;
 
@@ -29,6 +24,24 @@ public class ReportedIncident {
     @Column(name = "review")
     private String review;
 
+    @Column(name = "incident_type")
+    private Integer incidentType;
+
+    @Column(name = "incident_content")
+    private String incidentContent;
+
+    @Column(name = "incident_range")
+    private Integer incidentRange;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "admin_id")
+    private Integer adminId;
+
     @Column(name = "user_id")
     private Integer userId;
 
@@ -43,4 +56,15 @@ public class ReportedIncident {
 
     @Column(name = "update_time")
     private Date updateTime;
+
+    @PrePersist
+    protected void onCreate() {
+        createTime = new Date();
+        updateTime = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updateTime = new Date();
+    }
 }

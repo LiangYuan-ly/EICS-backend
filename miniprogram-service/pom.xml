@@ -12,8 +12,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>notification-service</artifactId>
-    <name>notification-service</name>
+    <artifactId>miniprogram-service</artifactId>
+    <name>miniprogram-service</name>
     <description>Real-time Notification and Messaging Service</description>
 
     <dependencies>
@@ -80,7 +80,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.emergency.notification.NotificationApplication</mainClass>
+                    <mainClass>com.emergency.notification.MiniProgramServiceApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

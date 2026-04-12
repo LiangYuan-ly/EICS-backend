@@ -63,11 +63,11 @@ spring:
           predicates:
             - Path=/api/plans/**, /api/plans, /api/cbr/**, /api/cbr
 
-        # 7. 通知服务 (notification-service)
-        - id: notification-service
-          uri: lb://notification-service
+        # 7. 小程序后台服务 (miniprogram-service)
+        - id: miniprogram-service
+          uri: lb://miniprogram-service
           predicates:
-            - Path=/api/notifications/**, /api/notifications
+            - Path=/api/notifications/**, /api/notifications, /api/notice/**, /api/user/login, /api/myevents/**, /api/events/withdraw/**, /api/events/report, /api/common/upload
 
 logging:
   level:

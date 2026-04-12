@@ -16,7 +16,7 @@
         <module>auth-service</module>
         <module>user-service</module>
         <module>event-service</module>
-        <module>notification-service</module>
+        <module>miniprogram-service</module>
         <module>news-service</module>
         <module>material-service</module>
         <module>cbr-service</module>
