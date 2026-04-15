@@ -69,7 +69,8 @@ public class MiniProgramService {
             user.setUserid(mockOpenId);
             user.setUname("微信用户-" + req.getCode().substring(0, Math.min(req.getCode().length(), 4)));
             user.setAvatar("https://iph.href.lu/100x100?text=User");
-            user.setStatus(0);
+            user.setGender(0);
+            user.setStatus(1);
             user = userRepository.save(user);
         }
 

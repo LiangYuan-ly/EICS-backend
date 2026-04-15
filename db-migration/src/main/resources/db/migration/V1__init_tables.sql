@@ -2,7 +2,7 @@
 -- 突发事件应急上报与指挥系统 数据库初始化脚本
 
 -- 1. 用户信息表 (user)
-CREATE TABLE `user` (
+CREATE TABLE `users` (
     `id` INT AUTO_INCREMENT COMMENT '主键ID',
     `userid` VARCHAR(64) NOT NULL UNIQUE COMMENT '用户微信唯一标识',
     `uname` VARCHAR(50) DEFAULT '新用户' COMMENT '用户名',
@@ -11,7 +11,7 @@ CREATE TABLE `user` (
     `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号',
     `location` VARCHAR(500) DEFAULT NULL COMMENT '地区',
     `deptid` INT DEFAULT NULL COMMENT '机构ID',
-    `status` INT DEFAULT 0 COMMENT '状态（0:正在使用, 1:已注销）',
+    `status` INT DEFAULT 1 COMMENT '状态（0:停用, 1:启用）',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)

@@ -31,7 +31,7 @@ spring:
         - id: news-service
           uri: lb://news-service
           predicates:
-            - Path=/api/admin/**, /api/news/upload
+            - Path=/api/admin/*news, /api/admin/news/**, /api/news/upload
 
         # 2. 事件统计服务 (event-service)
         - id: event-service
@@ -49,7 +49,7 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/api/admin/**
+            - Path=/api/admin/usersinfo, /api/admin/*users, /api/admin/userinfo/**
 
         # 5. 物资管理服务 (material-service)
         - id: material-service
@@ -67,7 +67,7 @@ spring:
         - id: cbr-service
           uri: lb://cbr-service
           predicates:
-            - Path=/api/emergency-schemes, /api/emergency-schemes/**, /api//plan/**
+            - Path=/api/emergency-schemes, /api/emergency-schemes/**, /api/plan/**
 
 
 logging:
