@@ -108,7 +108,25 @@ public class PublishedIncidentServiceImpl implements PublishedIncidentService {
                 predicates.add(cb.like(root.get("incidentLocation"), "%" + incidentLocation + "%"));
             }
             if (incidentRange != null) {
-                predicates.add(cb.equal(root.get("incidentRange"), incidentRange));
+                if (incidentRange == 3) {
+                    // 小于等于3米
+                    predicates.add(cb.lessThanOrEqualTo(root.get("incidentRange"), 3));
+                } else if (incidentRange == 10) {
+                    // 3米到10米 (大于3且小于等于10)
+                    predicates.add(cb.and(
+                            cb.greaterThan(root.get("incidentRange"), 3),
+                            cb.lessThanOrEqualTo(root.get("incidentRange"), 10)
+                    ));
+                } else if (incidentRange == 100) {
+                    // 10米到100米 (大于10且小于等于100)
+                    predicates.add(cb.and(
+                            cb.greaterThan(root.get("incidentRange"), 10),
+                            cb.lessThanOrEqualTo(root.get("incidentRange"), 100)
+                    ));
+                } else if (incidentRange == 101) {
+                    // 100米以上
+                    predicates.add(cb.greaterThan(root.get("incidentRange"), 100));
+                }
             }
             if (incidentStatus != null && !incidentStatus.isEmpty()) {
                 predicates.add(cb.equal(root.get("incidentStatus"), Integer.parseInt(incidentStatus)));
