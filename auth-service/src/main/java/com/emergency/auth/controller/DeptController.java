@@ -31,7 +31,7 @@ public class DeptController {
                 deptStatus);
     }
 
-    @DeleteMapping("/admin/deldepts")
+    @DeleteMapping("/depts/del")
     public Result<String> deleteDepts(@RequestBody DeleteIdsReq req) {
         return deptService.deleteDepts(req);
     }

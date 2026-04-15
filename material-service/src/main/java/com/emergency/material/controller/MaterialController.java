@@ -40,7 +40,7 @@ public class MaterialController {
         return materialService.updateMaterial(req);
     }
 
-    @DeleteMapping("/admin/delmaterials")
+    @DeleteMapping("/materials/del")
     public Result<String> deleteMaterials(@RequestBody IdsReq req) {
         return materialService.deleteMaterials(req);
     }

@@ -30,7 +30,7 @@ public class WarehouseController {
                 warehousePerson, warehousePhone, warehouseStatus, warehouseId);
     }
 
-    @DeleteMapping("/admin/delwarehouses")
+    @DeleteMapping("/warehouses/del")
     public Result<String> deleteWarehouses(@RequestBody IdsReq req) {
         return warehouseService.deleteWarehouses(req);
     }

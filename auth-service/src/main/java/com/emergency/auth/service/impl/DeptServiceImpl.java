@@ -88,7 +88,7 @@ public class DeptServiceImpl implements DeptService {
                     dto.setParentName(p.getDeptName());
                 });
             } else {
-                dto.setParentName("总公司");
+                dto.setParentName("");
             }
             return dto;
         }).collect(Collectors.toList());

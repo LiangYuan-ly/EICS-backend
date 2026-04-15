@@ -27,47 +27,48 @@ spring:
             maxAge: 3600
 
       routes:
-        # 1. 新闻管理服务 (news-service) - 优先匹配新闻相关路径
+        # 1. 新闻管理服务 (news-service)
         - id: news-service
           uri: lb://news-service
           predicates:
-            - Path=/api/admin/*news/**, /api/admin/*news, /api/news/**, /api/news
+            - Path=/api/admin/**, /api/news/upload
 
-        # 2. 用户管理服务 (user-service)
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/api/admin/usersinfo/**, /api/admin/usersinfo, /api/admin/userinfo/**, /api/admin/userinfo, /api/admin/delusers, /api/admin/updateusers
-
-        # 3. 物资管理服务 (material-service)
-        - id: material-service
-          uri: lb://material-service
-          predicates:
-            - Path=/api/warehouses/**, /api/warehouses, /api/materials/**, /api/materials, /api/admin/delwarehouses, /api/admin/delmaterials
-
-        # 4. 鉴权与部门/管理员服务 (auth-service) - 作为管理员/部门管理的基础路由
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/admins/**, /api/admins, /api/admin/deladmins, /api/admin/saveadmins, /api/admin/updateadmins, /api/admin/addadmins, /api/depts/**, /api/depts, /api/deptslist, /api/admin/deldepts
-
-        # 5. 事件大屏服务 (event-service)
+        # 2. 事件统计服务 (event-service)
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/emergency-events/**, /api/emergency-events, /api/map/**, /api/map, /api/dashboard/**, /api/dashboard, /api/reported-incidents/**, /api/reported-incidents, /api/reported-incidents-detail/**
+            - Path=/api/events/**, /api/emergency-events/**, /api/reported-incidents, /api/reported-incidents/** ,/api/reported-incidents-detail/**, /api/*-point
 
-        # 6. AI 决策服务/预案服务 (cbr-service)
-        - id: cbr-service
-          uri: lb://cbr-service
-          predicates:
-            - Path=/api/plans/**, /api/plans, /api/cbr/**, /api/cbr
-
-        # 7. 小程序后台服务 (miniprogram-service)
+        # 3. 小程序后台服务 (miniprogram-service)
         - id: miniprogram-service
           uri: lb://miniprogram-service
           predicates:
-            - Path=/api/notifications/**, /api/notifications, /api/notice/**, /api/user/login, /api/myevents/**, /api/events/withdraw/**, /api/events/report, /api/common/upload
+            - Path=/api/user/login, /api/notice/reported/**, /api/myevents/**, /api/events/**, /api/common/upload
+
+        # 4. 用户管理服务 (user-service)
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/admin/**
+
+        # 5. 物资管理服务 (material-service)
+        - id: material-service
+          uri: lb://material-service
+          predicates:
+            - Path=/api/materials, /api/materials/**, /api/category, /api/warehouses, /api/warehouses/**
+
+        # 6. 鉴权与部门管理服务 (auth-service)
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/admins, /api/admin/**, /api/admins/**, /api/admininfo, /api/admininfo/**, /api/avatar/upload, /api/worker/auth/workerLogin, /api/deptslist, /api/depts, /api/depts/**
+
+        # 7. AI 决策服务/预案服务 (cbr-service)
+        - id: cbr-service
+          uri: lb://cbr-service
+          predicates:
+            - Path=/api/emergency-schemes, /api/emergency-schemes/**, /api//plan/**
+
 
 logging:
   level:

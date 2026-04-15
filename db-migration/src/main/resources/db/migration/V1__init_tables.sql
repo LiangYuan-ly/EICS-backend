@@ -139,7 +139,7 @@ CREATE TABLE `materials` (
     `unit` VARCHAR(20) COMMENT '计量单位',
     `manufacturer` VARCHAR(50) COMMENT '生产厂家',
     `material_status` INT DEFAULT 1,
-    `remark` VARCHAR(255),
+    `material_remark` VARCHAR(255),
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`material_code`),

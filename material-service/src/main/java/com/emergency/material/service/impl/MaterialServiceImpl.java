@@ -60,15 +60,7 @@ public class MaterialServiceImpl implements MaterialService {
                 predicates.add(cb.equal(root.get("materialStatus"), materialStatus));
             }
             if (categoryName != null && !categoryName.isEmpty()) {
-                List<String> cCodes = categoryRepository.findAll().stream()
-                        .filter(c -> c.getCategoryName() != null && c.getCategoryName().contains(categoryName))
-                        .map(Category::getCategoryCode)
-                        .collect(Collectors.toList());
-                if (cCodes.isEmpty()) {
-                    predicates.add(cb.equal(root.get("materialCategory"), "NON_EXISTENT"));
-                } else {
-                    predicates.add(root.get("materialCategory").in(cCodes));
-                }
+                predicates.add(cb.like(root.get("materialCategory"), "%" + categoryName + "%"));
             }
             if (warehouseName != null && !warehouseName.isEmpty()) {
                 List<String> wCodes = warehouseRepository.findAll().stream()
@@ -107,6 +99,7 @@ public class MaterialServiceImpl implements MaterialService {
         m.setManufacturer(req.getManufacturer());
         m.setMaterialStatus(req.getMaterialStatus() != null ? req.getMaterialStatus() : 1);
         m.setCreateTime(new Date());
+        m.setMaterialRemark(req.getMaterialRemark());
 
         materialRepository.save(m);
         return Result.success(null, "新增成功");
@@ -146,6 +139,8 @@ public class MaterialServiceImpl implements MaterialService {
             m.setManufacturer(req.getManufacturer());
         if (req.getMaterialStatus() != null)
             m.setMaterialStatus(req.getMaterialStatus());
+        if (req.getMaterialRemark() != null)
+            m.setMaterialRemark(req.getMaterialRemark());
         m.setUpdateTime(new Date());
 
         materialRepository.save(m);
@@ -270,7 +265,7 @@ public class MaterialServiceImpl implements MaterialService {
                 d.setWarehousePerson(w.getWarehousePerson());
                 d.setWarehousePhone(w.getWarehousePhone());
                 d.setWarehouseStatus(w.getWarehouseStatus());
-                d.setWarehouseRemark(w.getRemark());
+                d.setMaterialRemark(m.getMaterialRemark());
             }
         }
 
@@ -285,6 +280,7 @@ public class MaterialServiceImpl implements MaterialService {
         d.setMaterialStatus(m.getMaterialStatus());
         d.setCreateTime(m.getCreateTime());
         d.setUpdateTime(m.getUpdateTime());
+        d.setMaterialRemark(m.getMaterialRemark());
         return d;
     }
 }

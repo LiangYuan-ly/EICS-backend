@@ -51,6 +51,9 @@ public class Material {
     @Column(name = "material_status")
     private Integer materialStatus;
 
+    @Column(name = "material_remark")
+    private String materialRemark;
+
     @Column(name = "create_time", updatable = false)
     private Date createTime;
 
