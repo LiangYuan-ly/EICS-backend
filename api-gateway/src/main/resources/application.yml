@@ -67,7 +67,7 @@ spring:
         - id: cbr-service
           uri: lb://cbr-service
           predicates:
-            - Path=/api/emergency-schemes, /api/emergency-schemes/**, /api/plan/**
+            - Path=/api/emergency-schemes, /api/emergency-schemes/**, /api/plan/**, /api/cbr/**
 
 
 logging:

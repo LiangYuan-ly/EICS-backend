@@ -175,6 +175,7 @@ CREATE TABLE `plans` (
     `plan_type` INT COMMENT '预案类型',
     `category_code` VARCHAR(20) COMMENT '适用事件类型',
     `plan_level` INT COMMENT '事件等级',
+    `plan_range` INT COMMENT '覆盖范围',
     `dept_id` INT COMMENT '发布机构',
     `publish_time` DATETIME,
     `plan_status` INT DEFAULT 1,

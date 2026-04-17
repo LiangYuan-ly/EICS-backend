@@ -39,6 +39,9 @@ public class Plan {
     @Column(name = "plan_url")
     private String planUrl;
 
+    @Column(name = "plan_range")
+    private Integer planRange;
+
     @Column(name = "create_time", updatable = false)
     private Date createTime;
 

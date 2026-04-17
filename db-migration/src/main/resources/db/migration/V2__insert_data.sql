@@ -63,18 +63,18 @@ VALUES
 
 -- 预案
 INSERT INTO `plans`
-(`ID`, `PLAN_CODE`, `PLAN_TITLE`, `PLAN_TYPE`, `CATEGORY_CODE`, `PLAN_LEVEL`, `DEPT_ID`, `PUBLISH_TIME`, `PLAN_STATUS`, `CREATE_TIME`, `UPDATE_TIME`, `PLAN_URL`)
+(`ID`, `PLAN_CODE`, `PLAN_TITLE`, `PLAN_TYPE`, `CATEGORY_CODE`, `PLAN_LEVEL`, `DEPT_ID`, `PUBLISH_TIME`, `PLAN_STATUS`, `CREATE_TIME`, `UPDATE_TIME`, `PLAN_URL`, `PLAN_RANGE`)
 VALUES
-(1,'ZD20240000001','成都市突发事件总体应急预案',1,'90000',1,1,'2024-02-28 10:00:00',1,'2024-02-27 09:30:00','2024-02-28 10:00:00','https://www.gov.cn/zhengce/zhengceku/2024-02/28/content_6991512.htm'),
-(2,'ZX20240000002','锦江区防汛抗旱应急预案',2,'10100',2,2,'2022-05-30 15:00:00',1,'2022-05-29 16:20:00','2022-05-30 15:00:00','https://www.gov.cn/zhengce/zhengceku/2022-05/30/content_5692952.htm'),
-(3,'ZD20240000003','春熙路街道突发事件总体应急预案',1,'90000',1,3,'2023-06-16 09:00:00',1,'2023-06-15 17:10:00','2023-06-16 09:00:00','https://www.sc.gov.cn/xxgk/webinfo/2023/6/16/168694.shtml'),
-(4,'ZX20240000004','青羊区地震应急预案',2,'10300',1,4,'2020-10-06 11:00:00',1,'2020-10-05 14:30:00','2020-10-06 11:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427356.shtml'),
-(5,'ZX20240000005','草市街街道气象灾害应急预案',2,'10200',3,5,'2020-10-06 10:00:00',1,'2020-10-05 15:20:00','2020-10-06 10:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427357.shtml'),
-(6,'ZX20240000006','武侯区突发环境事件应急预案',2,'21500',2,6,'2020-10-06 09:00:00',1,'2020-10-05 16:10:00','2020-10-06 09:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427354.shtml'),
-(7,'ZX20240000007','浆洗街街道自然灾害救助应急预案',2,'19900',1,7,'2024-01-19 14:00:00',1,'2024-01-18 11:20:00','2024-01-19 14:00:00','https://www.gov.cn/zhengce/zhengceku/2024-01/19/content_6012310.htm'),
-(8,'ZX20240000008','成华区生产安全事故应急预案',2,'29900',2,8,'2020-10-06 13:00:00',1,'2020-10-05 10:40:00','2020-10-06 13:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427351.shtml'),
-(9,'ZD20240000009','双桥子街道突发事件总体应急预案',1,'90000',1,9,'2023-08-10 16:00:00',1,'2023-08-09 15:30:00','2023-08-10 16:00:00','https://www.gd.gov.cn/gkmlpt/zc/202308/t20230810_397001.html'),
-(10,'ZX20240000010','金牛区地质灾害应急预案',2,'10400',3,10,'2024-03-05 10:20:00',1,'2024-03-04 09:10:00','2024-03-05 10:20:00','https://www.sc.gov.cn/xxgk/webinfo/2024/3/5/178921.shtml');
+(1,'ZD20240000001','成都市突发事件总体应急预案',1,'90000',1,1,'2024-02-28 10:00:00',1,'2024-02-27 09:30:00','2024-02-28 10:00:00','https://www.gov.cn/zhengce/zhengceku/2024-02/28/content_6991512.htm',30000),
+(2,'ZX20240000002','锦江区防汛抗旱应急预案',2,'10100',2,2,'2022-05-30 15:00:00',1,'2022-05-29 16:20:00','2022-05-30 15:00:00','https://www.gov.cn/zhengce/zhengceku/2022-05/30/content_5692952.htm',10000),
+(3,'ZD20240000003','春熙路街道突发事件总体应急预案',1,'90000',1,3,'2023-06-16 09:00:00',1,'2023-06-15 17:10:00','2023-06-16 09:00:00','https://www.sc.gov.cn/xxgk/webinfo/2023/6/16/168694.shtml',3000),
+(4,'ZX20240000004','青羊区地震应急预案',2,'10300',1,4,'2020-10-06 11:00:00',1,'2020-10-05 14:30:00','2020-10-06 11:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427356.shtml',12000),
+(5,'ZX20240000005','草市街街道气象灾害应急预案',2,'10200',3,5,'2020-10-06 10:00:00',1,'2020-10-05 15:20:00','2020-10-06 10:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427357.shtml',2500),
+(6,'ZX20240000006','武侯区突发环境事件应急预案',2,'21500',2,6,'2020-10-06 09:00:00',1,'2020-10-05 16:10:00','2020-10-06 09:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427354.shtml',11000),
+(7,'ZX20240000007','浆洗街街道自然灾害救助应急预案',2,'19900',1,7,'2024-01-19 14:00:00',1,'2024-01-18 11:20:00','2024-01-19 14:00:00','https://www.gov.cn/zhengce/zhengceku/2024-01/19/content_6012310.htm',2800),
+(8,'ZX20240000008','成华区生产安全事故应急预案',2,'29900',2,8,'2020-10-06 13:00:00',1,'2020-10-05 10:40:00','2020-10-06 13:00:00','https://www.mem.gov.cn/fw/yjya/gjzxyjya/202010/t20201006_427351.shtml',13000),
+(9,'ZD20240000009','双桥子街道突发事件总体应急预案',1,'90000',1,9,'2023-08-10 16:00:00',1,'2023-08-09 15:30:00','2023-08-10 16:00:00','https://www.gd.gov.cn/gkmlpt/zc/202308/t20230810_397001.html',3200),
+(10,'ZX20240000010','金牛区地质灾害应急预案',2,'10400',3,10,'2024-03-05 10:20:00',1,'2024-03-04 09:10:00','2024-03-05 10:20:00','https://www.sc.gov.cn/xxgk/webinfo/2024/3/5/178921.shtml',9000);
 
 -- 用户
 INSERT INTO `users`
@@ -107,7 +107,6 @@ VALUES
 ('USER2025000019', '尤二十一', 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png', 0, '13100000019', '金牛区沙湾路', 10, 0),
 ('USER2025000020', '许二十二', 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png', 2, '13000000020', '成都市金牛区主城区', 10, 1);
 
--- 上报事件
 -- 上报事件
 INSERT INTO reported_incidents (INCIDENT_TITLE,INCIDENT_TYPE,INCIDENT_CONTENT,INCIDENT_LOCATION,INCIDENT_RANGE,OCCURRENCE_TIME,LONGITUDE,LATITUDE,INCIDENT_STATUS,ADMIN_ID,REVIEW,USER_ID,CREATE_TIME)
 VALUES
@@ -146,6 +145,20 @@ VALUES
 ('古镇电线乱拉乱接',2,'古镇商铺私拉电线，火灾风险大','四川省成都市龙泉驿区洛带古镇',3,'2026-04-15 15:20:00',104.221500,30.563700,2,NULL,NULL,12,'2026-04-15 15:20:00'),
 ('凤凰湖公园设施破损',0,'公园座椅、路灯损坏严重','四川省成都市青白江区凤凰湖公园',1,'2026-04-15 13:30:00',104.268500,30.881200,3,1,'安排维护修缮',14,'2026-04-15 13:30:00'),
 ('兴隆湖周边非法露营',4,'游客违规露营，遗留大量垃圾','四川省成都市天府新区兴隆湖',10,'2026-04-15 10:10:00',104.084276,30.431589,2,NULL,NULL,16,'2026-04-15 10:10:00');
+
+-- 移动端相关数据
+INSERT INTO emergency_db.users
+(id, userid, uname, avatar, gender, phone, location, deptid, status, create_time, update_time)
+VALUES(21, 'openid-123456', '微信用户-1234', 'https://iph.href.lu/100x100?text=User', 0, NULL, NULL, NULL, 1, '2026-04-15 20:42:20', '2026-04-15 20:42:20');
+INSERT INTO emergency_db.reported_incidents
+(id, incident_title, incident_type, incident_content, incident_location, incident_range, occurrence_time, longitude, latitude, incident_status, admin_id, review, user_id, deleted, create_time, update_time)
+VALUES(36, '兴隆湖周边非法露营', 4, '游客违规露营，遗留大量垃圾', '四川省成都市天府新区兴隆湖', 10, '2026-04-15 10:10:00', 104.084276, 30.431589, 2, NULL, NULL, 21, 0, '2026-04-15 10:10:00', '2026-04-15 20:12:42');
+INSERT INTO emergency_db.reported_incidents
+(id, incident_title, incident_type, incident_content, incident_location, incident_range, occurrence_time, longitude, latitude, incident_status, admin_id, review, user_id, deleted, create_time, update_time)
+VALUES(37, '校园周边网吧违规经营', 4, '网吧接纳未成年人，超时营业', '四川省成都市温江区大学城', 10, '2026-04-15 11:40:00', 103.8421, 30.7126, 3, 1, '依法查处违规网吧', 21, 0, '2026-04-15 11:40:00', '2026-04-15 20:12:42');
+INSERT INTO emergency_db.reported_incidents
+(id, incident_title, incident_type, incident_content, incident_location, incident_range, occurrence_time, longitude, latitude, incident_status, admin_id, review, user_id, deleted, create_time, update_time)
+VALUES(38, '大学宿舍区停水停电', 2, '线路故障导致片区停水停电', '四川省成都市郫都区红光镇西华大学周边', 5, '2026-04-14 08:50:00', 103.8865, 30.8273, 5, NULL, NULL, 21, 0, '2026-04-14 08:50:00', '2026-04-15 20:12:42');
 
 -- 发布事件
 INSERT INTO published_incidents (INCIDENT_TITLE,INCIDENT_TYPE,INCIDENT_LEVEL,INCIDENT_CONTENT,INCIDENT_LOCATION,LONGITUDE,LATITUDE,INCIDENT_RANGE,OCCURRENCE_TIME,INCIDENT_STATUS,REMARK,ADMIN_ID,PUBLISH_ID,DELETED,CREATE_TIME)
