@@ -61,7 +61,7 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/api/admins, /api/admin/**, /api/admins/**, /api/admininfo, /api/admininfo/**, /api/avatar/upload, /api/worker/auth/workerLogin, /api/deptslist, /api/depts, /api/depts/**
+            - Path=/api/admins, /api/admin/**, /api/admins/**, /api/admininfo, /api/admininfo/**, /api/avatar/upload, /api/worker/auth/**, /api/deptslist, /api/depts, /api/depts/**
 
         # 7. AI 决策服务/预案服务 (cbr-service)
         - id: cbr-service

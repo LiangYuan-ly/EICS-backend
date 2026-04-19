@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -16,8 +16,8 @@
     <name>auth</name>
     <description>Authentication Service with Nacos and Flyway</description>
 
-    <!-- 删除所�?properties 中的版本覆盖！让父模块控�?-->
-    <!-- 不要再写 spring-boot.version �?java.version -->
+    <!-- 删除所�?properties 中的版本覆盖！让父模块控�?-->
+    <!-- 不要再写 spring-boot.version �?java.version -->
 
     <dependencies>
         <!-- Web starter -->
@@ -26,7 +26,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Nacos Discovery (服务注册与发�? -->
+        <!-- Nacos Discovery (服务注册与发�? -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -40,10 +40,10 @@
             <version>2022.0.0.0</version>
         </dependency>
 
-        <!-- 数据库相�?-->
+        <!-- 数据库相�?-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId> <!-- �?mybatis-spring-boot-starter -->
+            <artifactId>spring-boot-starter-data-jpa</artifactId> <!-- �?mybatis-spring-boot-starter -->
         </dependency>
 
         <dependency>
@@ -52,14 +52,14 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Flyway 数据库迁�?-->
+        <!-- Flyway 数据库迁�?-->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-mysql</artifactId> <!-- Spring Boot 3 需要显式引�?-->
+            <artifactId>flyway-mysql</artifactId> <!-- Spring Boot 3 需要显式引�?-->
         </dependency>
 
         <!-- JWT -->
@@ -81,7 +81,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Lombok（从父模块继承，无需版本�?-->
+        <!-- Lombok（从父模块继承，无需版本�?-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -93,6 +93,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 

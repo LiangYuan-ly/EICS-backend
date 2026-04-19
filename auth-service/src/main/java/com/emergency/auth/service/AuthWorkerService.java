@@ -5,9 +5,11 @@ import com.emergency.auth.common.Result;
 import com.emergency.auth.dto.AdminUserDto;
 import com.emergency.auth.dto.LoginReq;
 import com.emergency.auth.dto.LoginResp;
+import com.emergency.auth.dto.WorkerRegisterReq;
 import com.emergency.auth.entity.Admin;
 import com.emergency.auth.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,6 +19,9 @@ public class AuthWorkerService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     public Result<LoginResp> workerLogin(LoginReq req) {
         Optional<Admin> optionalAdmin = adminRepository.findByAdminPhone(req.getAdmin_phone());
@@ -48,5 +53,29 @@ public class AuthWorkerService {
         resp.setUser(dto);
         
         return Result.success(resp, "登录成功");
+    }
+
+    public Result<String> forgetPassword(WorkerRegisterReq req) {
+        // 校验验证码
+        String redisCode = stringRedisTemplate.opsForValue().get("sms:code:" + req.getAdmin_phone());
+        if (redisCode == null) {
+            return Result.error(400, "验证码已过期或未获取");
+        }
+        if (!redisCode.equals(req.getCode())) {
+            return Result.error(400, "验证码错误");
+        }
+
+        Optional<Admin> optionalAdmin = adminRepository.findByAdminPhone(req.getAdmin_phone());
+        if (optionalAdmin.isEmpty()) {
+            return Result.error(400, "该手机号未注册，无法操作");
+        }
+        
+        Admin admin = optionalAdmin.get();
+        admin.setAdminPassword(req.getAdmin_password()); // 明文处理，与登录逻辑保持一致
+        adminRepository.save(admin);
+        
+        // 成功后删除验证码
+        stringRedisTemplate.delete("sms:code:" + req.getAdmin_phone());
+        return Result.success("操作成功");
     }
 }
