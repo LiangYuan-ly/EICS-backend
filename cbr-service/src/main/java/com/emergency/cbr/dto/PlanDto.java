@@ -27,6 +27,9 @@ public class PlanDto {
     @JsonProperty("plan_level")
     private Integer planLevel;
     
+    @JsonProperty("plan_range")
+    private Integer planRange;
+    
     @JsonProperty("publish_time")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private String publishTime; // changed to String to handle partial dates from frontend or format automatically

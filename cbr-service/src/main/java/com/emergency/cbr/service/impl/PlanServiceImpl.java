@@ -102,6 +102,7 @@ public class PlanServiceImpl implements PlanService {
         p.setPlanType(req.getPlanType());
         p.setCategoryCode(req.getCategoryCode());
         p.setPlanLevel(req.getPlanLevel());
+        p.setPlanRange(req.getPlanRange());
         p.setDeptId(req.getDeptId());
 
         if (req.getPublishTime() != null && !req.getPublishTime().isEmpty()) {
@@ -155,6 +156,8 @@ public class PlanServiceImpl implements PlanService {
             p.setCategoryCode(req.getCategoryCode());
         if (req.getPlanLevel() != null)
             p.setPlanLevel(req.getPlanLevel());
+        if (req.getPlanRange() != null)
+            p.setPlanRange(req.getPlanRange());
         if (req.getDeptId() != null)
             p.setDeptId(req.getDeptId());
         if (req.getStatus() != null)
@@ -264,6 +267,7 @@ public class PlanServiceImpl implements PlanService {
         dto.setPlanType(p.getPlanType());
         dto.setCategoryCode(p.getCategoryCode());
         dto.setPlanLevel(p.getPlanLevel());
+        dto.setPlanRange(p.getPlanRange());
         if (p.getPublishTime() != null)
             dto.setPublishTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(p.getPublishTime()));
         dto.setDeptId(p.getDeptId());
