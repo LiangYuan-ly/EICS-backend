@@ -32,6 +32,8 @@ import com.emergency.eventservice.entity.ReportedAttachment;
 import com.emergency.eventservice.repository.ReportedAttachmentRepository;
 import com.emergency.eventservice.dto.AttachmentDto;
 
+import org.springframework.data.domain.Sort;
+
 @Service
 public class ReportedIncidentServiceImpl implements ReportedIncidentService {
 
@@ -51,7 +53,8 @@ public class ReportedIncidentServiceImpl implements ReportedIncidentService {
     public Result<PageData<IncidentDto>> getReportedIncidents(Integer pageSize, Integer pageNum, String incidentTitle, Integer incidentType, String incidentLocation, Integer incidentRange, String startTime, String endTime, Integer incidentStatus) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Specification<ReportedIncident> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -215,6 +218,9 @@ public class ReportedIncidentServiceImpl implements ReportedIncidentService {
         }
         if (req.getReview() != null) {
             inc.setReview(req.getReview());
+        }
+        if (req.getAdminId() != null) {
+            inc.setAdminId(req.getAdminId());
         }
         inc.setUpdateTime(new Date());
         reportedIncidentRepository.save(inc);

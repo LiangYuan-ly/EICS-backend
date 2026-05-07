@@ -6,4 +6,5 @@ import lombok.Data;
 public class ReviewReq {
     private Integer audit;
     private String review;
+    private Integer adminId;
 }

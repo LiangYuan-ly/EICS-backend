@@ -37,13 +37,13 @@ spring:
         - id: event-service
           uri: lb://event-service
           predicates:
-            - Path=/api/events, /api/emergency-events/**, /api/reported-incidents, /api/reported-incidents/** ,/api/reported-incidents-detail/**, /api/*-point
+            - Path=/api/events, /api/events/*-trend, /api/events/distribution, /api/emergency-events/**, /api/reported-incidents, /api/reported-incidents/** ,/api/reported-incidents-detail/**, /api/*-point
 
         # 3. 小程序后台服务 (miniprogram-service)
         - id: miniprogram-service
           uri: lb://miniprogram-service
           predicates:
-            - Path=/api/user/login, /api/notice/reported/**, /api/myevents/**, /api/events/**, /api/common/upload
+            - Path=/api/user/login, /api/notice/reported/**, /api/myevents/**, /api/events/withdraw/**, /api/events/report, /api/common/upload
 
         # 4. 用户管理服务 (user-service)
         - id: user-service

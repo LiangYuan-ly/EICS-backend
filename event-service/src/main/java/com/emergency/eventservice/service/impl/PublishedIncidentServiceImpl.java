@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 import java.io.File;
 import java.io.IOException;
 
+import org.springframework.data.domain.Sort;
+
 @Service
 public class PublishedIncidentServiceImpl implements PublishedIncidentService {
 
@@ -89,7 +91,8 @@ public class PublishedIncidentServiceImpl implements PublishedIncidentService {
     public Result<PageData<PublishedIncidentListDto>> getIncidents(Integer pageNum, Integer pageSize, String incidentTitle, Integer incidentType, Integer incidentLevel, String incidentLocation, Integer incidentRange, String startTime, String endTime, String incidentStatus) {
         int page = (pageNum != null && pageNum > 0) ? pageNum - 1 : 0;
         int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "occurrenceTime");
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Specification<PublishedIncident> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
