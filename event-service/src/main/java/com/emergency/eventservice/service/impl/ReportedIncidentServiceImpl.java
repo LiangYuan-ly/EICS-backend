@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 
+import com.emergency.eventservice.entity.ReportedAttachment;
+import com.emergency.eventservice.repository.ReportedAttachmentRepository;
+import com.emergency.eventservice.dto.AttachmentDto;
+
 @Service
 public class ReportedIncidentServiceImpl implements ReportedIncidentService {
 
@@ -39,6 +43,9 @@ public class ReportedIncidentServiceImpl implements ReportedIncidentService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private ReportedAttachmentRepository reportedAttachmentRepository;
 
     @Override
     public Result<PageData<IncidentDto>> getReportedIncidents(Integer pageSize, Integer pageNum, String incidentTitle, Integer incidentType, String incidentLocation, Integer incidentRange, String startTime, String endTime, Integer incidentStatus) {
@@ -159,12 +166,42 @@ public class ReportedIncidentServiceImpl implements ReportedIncidentService {
     public Result<IncidentDetailDto> getIncidentDetail(Integer id) {
         ReportedIncident inc = reportedIncidentRepository.findById(id).orElse(null);
         if (inc == null || (inc.getDeleted() != null && inc.getDeleted() == 1)) {
-            return Result.error(200, "未查找到相关事件");
+            return Result.error(200, "该事件不存在或已被删除");
         }
+
         List<User> users = userRepository.findAll();
         List<Admin> admins = adminRepository.findAll();
-        
-        return Result.success(mapToDetailDto(inc, users, admins));
+
+        IncidentDetailDto dto = mapToDetailDto(inc, users, admins);
+
+        // 新增：查询该事件的附件信息，target_type 固定为 "REPORT"
+        List<ReportedAttachment> atts = reportedAttachmentRepository.findByTargetIdAndTargetType(inc.getId(), "REPORT");
+
+        List<AttachmentDto> attDtos = atts.stream().map(a -> {
+            AttachmentDto addto = new AttachmentDto();
+            addto.setId(a.getId());
+            addto.setName(a.getAttachmentName());
+            addto.setUrl(a.getAttachmentUrl());
+
+            // 根据 SQL 表的注释：1:图片, 2:视频, 3:文档
+            if (a.getAttachmentType() != null) {
+                if (a.getAttachmentType() == 1) {
+                    addto.setType("image");
+                } else if (a.getAttachmentType() == 2) {
+                    addto.setType("video");
+                } else {
+                    addto.setType("document");
+                }
+            } else {
+                addto.setType("document"); // 默认回退
+            }
+            return addto;
+        }).collect(Collectors.toList());
+
+        // 将附件设置到 DTO 中
+        dto.setAttachments(attDtos);
+
+        return Result.success(dto);
     }
 
     @Override

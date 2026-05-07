@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class IncidentDetailDto {
@@ -47,4 +48,6 @@ public class IncidentDetailDto {
     
     private Double longitude;
     private Double latitude;
+
+    private List<AttachmentDto> attachments;
 }
