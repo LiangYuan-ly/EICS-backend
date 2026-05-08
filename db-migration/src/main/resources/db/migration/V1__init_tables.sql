@@ -88,7 +88,7 @@ CREATE TABLE `reported_incidents` (
 -- 6. 发布事件信息表 (published_incidents)
 CREATE TABLE `published_incidents` (
     `id` INT AUTO_INCREMENT COMMENT '主键ID',
-    `incident_title` VARCHAR(50) NOT NULL UNIQUE COMMENT '事件标题',
+    `incident_title` VARCHAR(50) NOT NULL COMMENT '事件标题',
     `incident_type` INT DEFAULT NULL,
     `incident_level` INT DEFAULT NULL COMMENT '严重程度(1-4)',
     `incident_content` TEXT,

@@ -158,6 +158,7 @@ public class NewsServiceImpl implements NewsService {
         if (news.getUpdateTime() != null) {
             dto.setUpdate_time(news.getUpdateTime().format(dateTimeFormatter));
         }
+        dto.setAdmin_id(news.getAdminId());
         if (news.getAdminId() != null) {
             adminRepository.findById(news.getAdminId()).ifPresent(admin -> dto.setAdmin_name(admin.getAdminName()));
         }
@@ -175,8 +176,8 @@ public class NewsServiceImpl implements NewsService {
         if (dto.getNews_status() != null) {
             news.setNewsStatus(dto.getNews_status());
         }
-        if (StringUtils.hasText(dto.getAdmin_name())) {
-            adminRepository.findByAdminName(dto.getAdmin_name()).ifPresent(admin -> news.setAdminId(admin.getId()));
+        if (dto.getAdmin_id() != null) {
+            news.setAdminId(dto.getAdmin_id());
         }
     }
 }

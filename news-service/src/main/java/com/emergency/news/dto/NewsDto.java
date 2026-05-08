@@ -11,6 +11,7 @@ public class NewsDto {
     private String news_photo;
     private String news_url;
     private Integer news_status;
+    private Integer admin_id;
     private String admin_name;
     private String create_time;
     private String update_time;

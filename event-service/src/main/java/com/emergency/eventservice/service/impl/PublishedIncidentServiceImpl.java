@@ -189,7 +189,7 @@ public class PublishedIncidentServiceImpl implements PublishedIncidentService {
         if (req != null && req.getIds() != null) {
             for (Integer id : req.getIds()) {
                 publishedIncidentRepository.findById(id).ifPresent(inc -> {
-                    inc.setIncidentStatus(2); // Withdrawn/Pending
+                    inc.setIncidentStatus(4); // Withdrawn
                     inc.setUpdateTime(new Date());
                     publishedIncidentRepository.save(inc);
                 });
@@ -218,7 +218,25 @@ public class PublishedIncidentServiceImpl implements PublishedIncidentService {
         inc.setUpdateTime(new Date());
         publishedIncidentRepository.save(inc);
 
-        saveAttachments(inc.getId(), req.getAttachments());
+        // 获取数据库中当前事件已经绑定的附件
+        List<PublishedAttachment> existingAtts = publishedAttachmentRepository.findByTargetIdAndTargetType(inc.getId(), "PUBLISH");
+        List<String> existingUrls = existingAtts.stream()
+                .map(PublishedAttachment::getAttachmentUrl)
+                .collect(Collectors.toList());
+
+        // 找出真正需要新增的附件 URL
+        List<String> urlsToAdd = new ArrayList<>();
+        if (req.getAttachments() != null) {
+            for (String url : req.getAttachments()) {
+                if (!existingUrls.contains(url)) {
+                    urlsToAdd.add(url);
+                }
+            }
+        }
+
+        // 保存真正新增的附件
+        saveAttachments(inc.getId(), urlsToAdd);
+
         return Result.success(null, "修改成功");
     }
 
