@@ -15,6 +15,7 @@ import com.emergency.material.repository.MaterialInoutRepository;
 import com.emergency.material.repository.MaterialRepository;
 import com.emergency.material.repository.WarehouseRepository;
 import com.emergency.material.service.MaterialService;
+import com.emergency.material.dto.MaterialInoutDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -160,7 +161,24 @@ public class MaterialServiceImpl implements MaterialService {
         Material m = materialRepository.findById(id).orElse(null);
         if (m == null)
             return Result.error("物资未找到");
-        return Result.success(convertToDto(m), "查询成功");
+
+        MaterialDto dto = convertToDto(m);
+
+        // 查询关联的出入库记录
+        List<MaterialInout> inouts = materialInoutRepository.findByMaterialIdOrderByCreateTimeDesc(id);
+        List<MaterialInoutDto> inoutDtos = inouts.stream().map(inout -> {
+            MaterialInoutDto inoutDto = new MaterialInoutDto();
+            inoutDto.setId(inout.getId());
+            inoutDto.setInOut(inout.getInOut());
+            inoutDto.setNum(inout.getNum());
+            inoutDto.setRemark(inout.getRemark());
+            inoutDto.setCreateTime(inout.getCreateTime());
+            return inoutDto;
+        }).collect(Collectors.toList());
+
+        dto.setInOutRecords(inoutDtos);
+
+        return Result.success(dto, "查询成功");
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class MaterialDto {
@@ -73,4 +74,7 @@ public class MaterialDto {
     @JsonProperty("update_time")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date updateTime;
+
+    @JsonProperty("in_out_records")
+    private List<MaterialInoutDto> inOutRecords;
 }
