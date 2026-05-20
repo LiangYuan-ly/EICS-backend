@@ -34,15 +34,23 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Override
     public Result<String> updateAdminInfo(AdminInfoUpdateReq req) {
         Admin admin = adminRepository.findById(getCurrentAdminId()).orElse(null);
-        if (admin == null) return Result.error("管理员不存在");
+        if (admin == null)
+            return Result.error("管理员不存在");
 
-        if (req.getAdminName() != null) admin.setAdminName(req.getAdminName());
-        if (req.getAdminAvatar() != null) admin.setAdminAvatar(req.getAdminAvatar());
-        if (req.getAdminGender() != null) admin.setAdminGender(req.getAdminGender());
-        if (req.getAdminPhone() != null) admin.setAdminPhone(req.getAdminPhone());
-        if (req.getAdminEmail() != null) admin.setAdminEmail(req.getAdminEmail());
-        if (req.getAdminLocation() != null) admin.setAdminLocation(req.getAdminLocation());
-        if (req.getRemark() != null) admin.setRemark(req.getRemark());
+        if (req.getAdminName() != null)
+            admin.setAdminName(req.getAdminName());
+        if (req.getAdminAvatar() != null)
+            admin.setAdminAvatar(req.getAdminAvatar());
+        if (req.getAdminGender() != null)
+            admin.setAdminGender(req.getAdminGender());
+        if (req.getAdminPhone() != null)
+            admin.setAdminPhone(req.getAdminPhone());
+        if (req.getAdminEmail() != null)
+            admin.setAdminEmail(req.getAdminEmail());
+        if (req.getAdminLocation() != null)
+            admin.setAdminLocation(req.getAdminLocation());
+        if (req.getRemark() != null)
+            admin.setRemark(req.getRemark());
         admin.setUpdateTime(new Date());
 
         adminRepository.save(admin);
@@ -70,7 +78,8 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Override
     public Result<String> changePassword(ChangePasswordReq req) {
         Admin admin = adminRepository.findById(getCurrentAdminId()).orElse(null);
-        if (admin == null) return Result.error("管理员不存在");
+        if (admin == null)
+            return Result.error("管理员不存在");
 
         if (req.getOldPassword() == null || !req.getOldPassword().equals(admin.getAdminPassword())) {
             return Result.error("旧密码错误");
@@ -88,7 +97,8 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Override
     public Result<AdminInfoDto> getAdminInfo() {
         Admin admin = adminRepository.findById(getCurrentAdminId()).orElse(null);
-        if (admin == null) return Result.error("管理员不存在");
+        if (admin == null)
+            return Result.error("管理员不存在");
 
         AdminInfoDto dto = new AdminInfoDto();
         dto.setAdminName(admin.getAdminName() != null ? admin.getAdminName() : "");
@@ -118,11 +128,13 @@ public class AdminInfoServiceImpl implements AdminInfoService {
 
     @Override
     public Result<String> uploadAvatar(MultipartFile file) {
-        if (file == null || file.isEmpty()) return Result.error("文件不能为空");
+        if (file == null || file.isEmpty())
+            return Result.error("文件不能为空");
         try {
             String dirPath = System.getProperty("user.dir") + "/static/avatar/";
             File dir = new File(dirPath);
-            if (!dir.exists()) dir.mkdirs();
+            if (!dir.exists())
+                dir.mkdirs();
 
             String originalName = file.getOriginalFilename();
             String extension = "";
@@ -133,7 +145,18 @@ public class AdminInfoServiceImpl implements AdminInfoService {
             File dest = new File(dirPath + fileName);
             file.transferTo(dest);
 
-            return Result.success("http://localhost:8081/static/avatar/" + fileName, "头像上传成功");
+            String baseUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .toUriString();
+            try {
+                String ip = java.net.InetAddress.getLocalHost().getHostAddress();
+                baseUrl = baseUrl.replace("localhost", ip).replace("127.0.0.1", ip);
+            } catch (Exception e) {
+                // ignore
+            }
+            String fileUrl = baseUrl + "/static/avatar/" + fileName;
+
+            return Result.success(fileUrl, "头像上传成功");
         } catch (IOException e) {
             return Result.error("上传失败: " + e.getMessage());
         }

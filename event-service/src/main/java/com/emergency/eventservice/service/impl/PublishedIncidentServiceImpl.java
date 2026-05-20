@@ -254,7 +254,12 @@ public class PublishedIncidentServiceImpl implements PublishedIncidentService {
             File dest = new File(dirPath + fileName);
             file.transferTo(dest);
 
-            return Result.success("http://localhost:8084/uploads/" + fileName, "上传成功");
+            String fileUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/uploads/" + fileName)
+                    .toUriString();
+
+            return Result.success(fileUrl, "上传成功");
         } catch (IOException e) {
             return Result.error("上传失败: " + e.getMessage());
         }

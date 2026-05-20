@@ -135,7 +135,12 @@ public class NewsServiceImpl implements NewsService {
             String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             File dest = new File(dirPath + filename);
             file.transferTo(dest);
-            return "http://localhost:8080/uploads/" + filename; // Return mock URL
+
+            String fileUrl = org.springframework.web.servlet.support.ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/uploads/" + filename)
+                    .toUriString();
+            return fileUrl;
         } catch (IOException e) {
             throw new RuntimeException("File upload failed", e);
         }
